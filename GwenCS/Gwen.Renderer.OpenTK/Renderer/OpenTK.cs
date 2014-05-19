@@ -35,7 +35,7 @@ namespace Gwen.Renderer
 		private bool m_TextureEnabled;
 		static private int m_LastTextureID;
 
-		private bool m_WasBlendEnabled, m_WasTexture2DEnabled, m_WasDepthTestEnabled;
+		private bool m_WasBlendEnabled, m_WasDepthTestEnabled;
 		private int m_PrevBlendSrc, m_PrevBlendDst, m_PrevAlphaFunc;
 		private float m_PrevAlphaRef;
 		private bool m_RestoreRenderState;
@@ -111,16 +111,13 @@ namespace Gwen.Renderer
 				GL.GetFloat(GetPName.AlphaTestRef, out m_PrevAlphaRef);
 
 				m_WasBlendEnabled = GL.IsEnabled(EnableCap.Blend);
-				m_WasTexture2DEnabled = GL.IsEnabled(EnableCap.Texture2D);
 				m_WasDepthTestEnabled = GL.IsEnabled(EnableCap.DepthTest);
 			}
 
 			// Set default values and enable/disable caps.
 			GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
-			//GL.AlphaFunc(AlphaFunction.Greater, 1.0f);
 			GL.Enable(EnableCap.Blend);
 			GL.Disable(EnableCap.DepthTest);
-			//GL.Disable(EnableCap.Texture2D);
 
 			m_VertNum = 0;
 			m_TotalVertNum = 0;
@@ -143,13 +140,9 @@ namespace Gwen.Renderer
 
 				// Restore the previous parameter values.
 				GL.BlendFunc((BlendingFactorSrc)m_PrevBlendSrc, (BlendingFactorDest)m_PrevBlendDst);
-				//GL.AlphaFunc((AlphaFunction)m_PrevAlphaFunc, m_PrevAlphaRef);
 
 				if (!m_WasBlendEnabled)
 					GL.Disable(EnableCap.Blend);
-
-				if (m_WasTexture2DEnabled && !m_TextureEnabled)
-					//GL.Enable(EnableCap.Texture2D);
 
 				if (m_WasDepthTestEnabled)
 					GL.Enable(EnableCap.DepthTest);
@@ -181,16 +174,11 @@ namespace Gwen.Renderer
 		{
 			if (m_VertNum == 0) return;
 
-			//GL.BindVertexArray (vao);
-
-			//GL.BindBuffer (BufferTarget.ArrayBuffer, vbo);
 			GL.BufferSubData<Vertex> (BufferTarget.ArrayBuffer, IntPtr.Zero, (IntPtr)(m_VertNum * m_VertexSize), m_Vertices);
 
 			GL.Uniform1 (guiShader.Uniforms["uUseTexture"], m_TextureEnabled ? 1.0f : 0.0f);
 
 			GL.DrawArrays (PrimitiveType.Triangles, 0, m_VertNum);
-
-			//GL.BindVertexArray (0);
 
 			m_DrawCallCount++;
 			m_TotalVertNum += m_VertNum;
@@ -202,7 +190,6 @@ namespace Gwen.Renderer
 			if (m_TextureEnabled)
 			{
 				Flush();
-				//GL.Disable(EnableCap.Texture2D);
 				m_TextureEnabled = false;
 			}
 
@@ -250,7 +237,6 @@ namespace Gwen.Renderer
 
 			if (!m_TextureEnabled)
 			{
-				//GL.Enable(EnableCap.Texture2D);
 				m_TextureEnabled = true;
 			}
 
