@@ -100,7 +100,7 @@ namespace Gwen.Renderer
 		}
 
 		private const string vShaderSource = @"
-#version 430
+#version 420
 
 layout(location=0) in vec2 in_screen_coords;
 layout(location=1) in vec2 in_uv;
@@ -124,7 +124,7 @@ void main(void)
 
 
 		private const string fShaderSource = @"
-#version 430
+#version 420
 
 in vec2 frag_uv;
 in vec4 frag_color;

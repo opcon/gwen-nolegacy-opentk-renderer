@@ -21,7 +21,7 @@ namespace Gwen.Renderer
 			public float r, g, b, a;
 		}
 
-		private const int MaxVerts = 1024;
+		private const int MaxVerts = 4096;
 		private Color m_Color;
 		private int m_VertNum;
 		private readonly Vertex[] m_Vertices;
@@ -482,7 +482,9 @@ namespace Gwen.Renderer
 
 				Point size = MeasureText(font, text);
 				TextRenderer tr = new TextRenderer(size.X, size.Y, this);
-				tr.DrawString(text, sysFont, new SolidBrush(this.DrawColor), Point.Empty, m_StringFormat); // renders string on the texture
+				Brush b = new SolidBrush (this.DrawColor);
+				tr.DrawString(text, sysFont, b, Point.Empty, m_StringFormat); // renders string on the texture
+				b.Dispose ();
 
 				DrawTexturedRect(tr.Texture, new Rectangle(position.X, position.Y, tr.Texture.Width, tr.Texture.Height));
 
