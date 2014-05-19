@@ -29,8 +29,6 @@ namespace Gwen.Sample.OpenTK
 		private long lastTime;
 		private bool altDown = false;
 
-		Label frameTime;
-
 		public SimpleWindow()
 			: base (1024, 768, new GraphicsMode (), "gwen OpenTK Renderer", GameWindowFlags.Default, DisplayDevice.Default, 4, 3, GraphicsContextFlags.Default)
 		{
@@ -122,13 +120,7 @@ namespace Gwen.Sample.OpenTK
 			canvas.BackgroundColor = Color.FromArgb(255, 150, 170, 170);
 			//canvas.KeyboardInputEnabled = true;
 
-			test = new UnitTest.UnitTest(canvas);		
-
-			Label l = new Label (canvas);
-			l.SetText ("Initial Text");
-			l.SetSize (100, 20);
-
-			frameTime = l;
+			test = new UnitTest.UnitTest(canvas);
 
 			stopwatch.Restart();
 			lastTime = 0;
@@ -144,7 +136,6 @@ namespace Gwen.Sample.OpenTK
 			renderer.Resize (Width, Height);
 
 			canvas.SetSize(Width, Height);
-			frameTime.Position (Pos.Right | Pos.Top, 20);
 		}
 
 		/// <summary>
@@ -169,7 +160,6 @@ namespace Gwen.Sample.OpenTK
 				test.Fps = 1000f * ftime.Count / ftime.Sum();
 
 				float ft = 1000 * (float)e.Time;
-				this.frameTime.SetText (String.Format ("Frame time: {0:0.00}ms", ft));
 
 				stopwatch.Restart();
 

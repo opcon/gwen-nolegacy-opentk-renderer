@@ -26,9 +26,9 @@ namespace Gwen.UnitTest
             LeftDock.TabControl.AddPage("Unit tests", m_List);
             LeftDock.Width = 150;
 
-            //m_TextOutput = new Control.ListBox(BottomDock);
-            //m_Button = BottomDock.TabControl.AddPage("Output", m_TextOutput);
-            //BottomDock.Height = 200;
+            m_TextOutput = new Control.ListBox(BottomDock);
+            m_Button = BottomDock.TabControl.AddPage("Output", m_TextOutput);
+            BottomDock.Height = 200;
 
             m_DebugCheck = new Control.LabeledCheckBox(m_List);
             m_DebugCheck.Text = "Debug outlines";
@@ -150,8 +150,8 @@ namespace Gwen.UnitTest
 
         public void PrintText(string str)
         {
-            //m_TextOutput.AddRow(str);
-            //m_TextOutput.ScrollToBottom();
+            m_TextOutput.AddRow(str);
+			m_TextOutput.ScrollToBottom();
         }
 
         protected override void Layout(Skin.Base skin)

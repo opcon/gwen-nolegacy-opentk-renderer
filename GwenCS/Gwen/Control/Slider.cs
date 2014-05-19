@@ -230,7 +230,7 @@ namespace Gwen.Control
             if (InputHandler.KeyboardFocus != this) return;
             if (!IsTabable) return;
             
-            //skin.DrawKeyboardHighlight(this, RenderBounds, 0);
+            skin.DrawKeyboardHighlight(this, RenderBounds, 0);
         }
     }
 }
