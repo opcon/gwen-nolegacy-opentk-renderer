@@ -174,6 +174,7 @@ namespace Gwen.Renderer
 		{
 			if (m_VertNum == 0) return;
 
+			GL.InvalidateBufferData (vbo);
 			GL.BufferSubData<Vertex> (BufferTarget.ArrayBuffer, IntPtr.Zero, (IntPtr)(m_VertNum * m_VertexSize), m_Vertices);
 
 			GL.Uniform1 (guiShader.Uniforms["uUseTexture"], m_TextureEnabled ? 1.0f : 0.0f);
