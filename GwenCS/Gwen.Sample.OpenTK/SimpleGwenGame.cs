@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using OpenTK;
 using OpenTK.Input;
-using OpenTK.Graphics.OpenGL;
+using OpenTK.Graphics.OpenGL4;
 using OpenTK.Graphics;
 using System.Drawing;
 using Gwen.Control;

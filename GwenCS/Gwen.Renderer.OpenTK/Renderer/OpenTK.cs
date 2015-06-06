@@ -5,7 +5,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using System.Threading;
-using OpenTK.Graphics.OpenGL;
+using OpenTK.Graphics.OpenGL4;
 
 using PixelFormat = System.Drawing.Imaging.PixelFormat;
 
@@ -102,20 +102,20 @@ namespace Gwen.Renderer
 			GL.BindVertexArray (vao);
 			GL.BindBuffer (BufferTarget.ArrayBuffer, vbo);
 
-			if (m_RestoreRenderState)
-			{
-				// Get previous parameter values before changing them.
-				GL.GetInteger(GetPName.BlendSrc, out m_PrevBlendSrc);
-				GL.GetInteger(GetPName.BlendDst, out m_PrevBlendDst);
-				GL.GetInteger(GetPName.AlphaTestFunc, out m_PrevAlphaFunc);
-				GL.GetFloat(GetPName.AlphaTestRef, out m_PrevAlphaRef);
+            if (m_RestoreRenderState)
+            {
+                // Get previous parameter values before changing them.
+                GL.GetInteger(GetPName.BlendSrc, out m_PrevBlendSrc);
+                GL.GetInteger(GetPName.BlendDst, out m_PrevBlendDst);
+                //GL.GetInteger(GetPName.AlphaTestFunc, out m_PrevAlphaFunc);
+                //GL.GetFloat(GetPName.AlphaTestRef, out m_PrevAlphaRef);
 
-				m_WasBlendEnabled = GL.IsEnabled(EnableCap.Blend);
-				m_WasDepthTestEnabled = GL.IsEnabled(EnableCap.DepthTest);
-			}
+                m_WasBlendEnabled = GL.IsEnabled(EnableCap.Blend);
+                m_WasDepthTestEnabled = GL.IsEnabled(EnableCap.DepthTest);
+            }
 
-			// Set default values and enable/disable caps.
-			GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
+            // Set default values and enable/disable caps.
+            GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
 			GL.Enable(EnableCap.Blend);
 			GL.Disable(EnableCap.DepthTest);
 
@@ -139,7 +139,7 @@ namespace Gwen.Renderer
 				m_LastTextureID = 0;
 
 				// Restore the previous parameter values.
-				GL.BlendFunc((BlendingFactorSrc)m_PrevBlendSrc, (BlendingFactorDest)m_PrevBlendDst);
+                GL.BlendFunc((BlendingFactorSrc)m_PrevBlendSrc, (BlendingFactorDest)m_PrevBlendDst);
 
 				if (!m_WasBlendEnabled)
 					GL.Disable(EnableCap.Blend);
@@ -536,7 +536,7 @@ namespace Gwen.Renderer
 			switch (lock_format)
 			{
 				case PixelFormat.Format32bppArgb:
-					GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, t.Width, t.Height, 0, global::OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
+					GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, t.Width, t.Height, 0, global::OpenTK.Graphics.OpenGL4.PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
 					break;
 				default:
 					// invalid
@@ -613,7 +613,7 @@ namespace Gwen.Renderer
 			var data = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly,
 				PixelFormat.Format32bppArgb);
 
-			GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, t.Width, t.Height, 0, global::OpenTK.Graphics.OpenGL.PixelFormat.Rgba, PixelType.UnsignedByte, data.Scan0);
+			GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, t.Width, t.Height, 0, global::OpenTK.Graphics.OpenGL4.PixelFormat.Rgba, PixelType.UnsignedByte, data.Scan0);
 
 			bmp.UnlockBits(data);
 			bmp.Dispose();
@@ -655,7 +655,7 @@ namespace Gwen.Renderer
 			byte[] data = new byte[4 * texture.Width * texture.Height];
 			fixed (byte* ptr = &data[0])
 			{
-				GL.GetTexImage(TextureTarget.Texture2D, 0, global::OpenTK.Graphics.OpenGL.PixelFormat.Rgba, PixelType.UnsignedByte, (IntPtr)ptr);
+				GL.GetTexImage(TextureTarget.Texture2D, 0, global::OpenTK.Graphics.OpenGL4.PixelFormat.Rgba, PixelType.UnsignedByte, (IntPtr)ptr);
 				pixel = Color.FromArgb(data[offset + 3], data[offset + 0], data[offset + 1], data[offset + 2]);
 			}
 
