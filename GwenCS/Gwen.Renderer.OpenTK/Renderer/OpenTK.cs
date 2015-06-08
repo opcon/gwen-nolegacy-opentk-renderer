@@ -180,7 +180,11 @@ namespace Gwen.Renderer
 		{
 			if (m_VertNum == 0) return;
 
-			GL.InvalidateBufferData (vbo);
+//			GL.InvalidateBufferData (vbo);
+
+            //GL.InvalidateBufferData was not introduced in the core profile until 4.3, use the following method instead
+            GL.BufferData (BufferTarget.ArrayBuffer, (IntPtr)(m_VertexSize * MaxVerts), IntPtr.Zero, BufferUsageHint.StreamDraw);
+
 			GL.BufferSubData<Vertex> (BufferTarget.ArrayBuffer, IntPtr.Zero, (IntPtr)(m_VertNum * m_VertexSize), m_Vertices);
 
 			GL.Uniform1 (guiShader.Uniforms["uUseTexture"], m_TextureEnabled ? 1.0f : 0.0f);
