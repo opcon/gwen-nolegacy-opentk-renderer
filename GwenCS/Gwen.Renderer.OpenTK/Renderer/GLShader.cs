@@ -66,6 +66,13 @@ namespace Gwen.Renderer
 			this._uniforms = new UniformDictionary (Program);
 		}
 
+	    public int GetAttributeLocation(string name)
+	    {
+	        int loc = GL.GetAttribLocation(Program, name);
+            Debug.Assert(loc != -1);
+	        return loc;
+	    }
+
 		public class UniformDictionary
 		{
 			private Dictionary<string, int> _data;
@@ -100,11 +107,11 @@ namespace Gwen.Renderer
 		}
 
 		private const string vShaderSource = @"
-#version 420
+#version 130
 
-layout(location=0) in vec2 in_screen_coords;
-layout(location=1) in vec2 in_uv;
-layout(location=2) in vec4 in_color;
+in vec2 in_screen_coords;
+in vec2 in_uv;
+in vec4 in_color;
 
 out vec2 frag_uv;
 out vec4 frag_color;
@@ -124,12 +131,12 @@ void main(void)
 
 
 		private const string fShaderSource = @"
-#version 420
+#version 130
 
 in vec2 frag_uv;
 in vec4 frag_color;
 
-layout(binding=0) uniform sampler2D tex;
+uniform sampler2D tex;
 
 out vec4 out_frag_color;
 
@@ -138,7 +145,12 @@ uniform float uUseTexture = 0.0;
 void main(void)
 {
 	vec4 texColor = texture(tex, frag_uv);
-	out_frag_color = texColor * uUseTexture + frag_color * (1.0 - uUseTexture);
+    vec4 finalColor = texColor * uUseTexture + frag_color * (1.0 - uUseTexture);
+    if (finalColor.a <= 0.0)
+        discard;
+
+	out_frag_color = finalColor;
+    
 }";
 
 	}

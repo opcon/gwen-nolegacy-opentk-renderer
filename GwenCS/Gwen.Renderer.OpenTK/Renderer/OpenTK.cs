@@ -73,16 +73,22 @@ namespace Gwen.Renderer
 			GL.BufferData (BufferTarget.ArrayBuffer, (IntPtr)(m_VertexSize * MaxVerts), IntPtr.Zero, BufferUsageHint.StreamDraw); // Allocate
 
 			// Vertex positions
-			GL.EnableVertexAttribArray (0);
-			GL.VertexAttribPointer (0, 2, VertexAttribPointerType.Float, false, m_VertexSize, 0);
+            // Get vertex position attribute location
+		    int l = guiShader.GetAttributeLocation("in_screen_coords");
+			GL.EnableVertexAttribArray (l);
+			GL.VertexAttribPointer (l, 2, VertexAttribPointerType.Float, false, m_VertexSize, 0);
 			
 			// Tex coords
-			GL.EnableVertexAttribArray (1);
-			GL.VertexAttribPointer (1, 2, VertexAttribPointerType.Float, false, m_VertexSize, 2 * sizeof(float));
+            // Get tex coord attribute location
+		    l = guiShader.GetAttributeLocation("in_uv");
+			GL.EnableVertexAttribArray (l);
+			GL.VertexAttribPointer (l, 2, VertexAttribPointerType.Float, false, m_VertexSize, 2 * sizeof(float));
 			
 			// Colors
-			GL.EnableVertexAttribArray (2);
-			GL.VertexAttribPointer (2, 4, VertexAttribPointerType.Float, false, m_VertexSize, 2 * (sizeof (float) + sizeof (float)));
+            // Get colors attribute location
+		    l = guiShader.GetAttributeLocation("in_color");
+			GL.EnableVertexAttribArray (l);
+			GL.VertexAttribPointer (l, 4, VertexAttribPointerType.Float, false, m_VertexSize, 2 * (sizeof (float) + sizeof (float)));
 
 			GL.BindBuffer (BufferTarget.ArrayBuffer, 0);
 			GL.BindVertexArray (0);
