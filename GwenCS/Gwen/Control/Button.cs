@@ -158,7 +158,7 @@ namespace Gwen.Control
             }
             else
             {
-                if (IsHovered && m_Depressed)
+                if (IsHovered && m_Depressed && this.GetCanvas().GetControlAt(x, y) == this)
                 {
                     OnClicked(x, y);
                 }
