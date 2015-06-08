@@ -57,10 +57,10 @@ namespace Gwen.Renderer
 			m_StringFormat.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
 			m_RestoreRenderState = restoreRenderState;
 
-			CreateBuffers ();
+            guiShader = new GLShader ();
+            guiShader.Load ("gui");
 
-			guiShader = new GLShader ();
-			guiShader.Load ("gui");
+			CreateBuffers ();
 		}
 
 		private void CreateBuffers ()
