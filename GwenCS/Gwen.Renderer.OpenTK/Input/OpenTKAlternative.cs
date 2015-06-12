@@ -117,32 +117,6 @@ namespace Gwen.Input
             return m_Canvas.Input_MouseWheel(delta * 60);
         }
 
-        //public bool ProcessMouseMessage(EventArgs args)
-        //{
-        //    if (null == m_Canvas) return false;
-
-        //    //if (args is MouseMoveEventArgs)
-        //    //{
-        //    //    MouseMoveEventArgs ev = args as MouseMoveEventArgs;
-
-        //    //}
-
-        //    //if (args is MouseButtonEventArgs)
-        //    //{
-        //    //    MouseButtonEventArgs ev = args as MouseButtonEventArgs;
-
-
-        //    //}
-
-        //    //if (args is MouseWheelEventArgs)
-        //    //{
-        //    //    MouseWheelEventArgs ev = args as MouseWheelEventArgs;
-        //    //    ;
-        //    //}
-
-        //    return false;
-        //}
-
         public bool ProcessKeyDown(OpenTKKey key)
         {
             char ch = TranslateChar(key);
