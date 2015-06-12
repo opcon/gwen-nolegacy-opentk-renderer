@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using System.Threading;
+using OpenTK;
 using OpenTK.Graphics.OpenGL4;
 
 using PixelFormat = System.Drawing.Imaging.PixelFormat;
@@ -45,6 +46,8 @@ namespace Gwen.Renderer
 		private int vbo, vao;
 
 		GLShader guiShader;
+
+	    private Matrix4 m_ProjectionMatrix;
 
 		public OpenTK(bool restoreRenderState = true)
 			: base()
@@ -681,11 +684,28 @@ namespace Gwen.Renderer
 			return pixel;
 		}
 
+        [Obsolete("Use Resize(Matrix4 projMatrix) instead")]
 		public void Resize (int width, int height)
 		{
 			GL.Viewport (0, 0, width, height);
 			GL.UseProgram (guiShader.Program);
 			GL.Uniform2 (guiShader.Uniforms["uScreenSize"], (float)width, (float)height);
 		}
+
+	    public void Resize(Matrix4 projMatrix)
+	    {
+            Resize(ref projMatrix);
+	    }
+
+        /// <summary>
+        /// Updates the current projection matrix for the render. NOTE the Gwen.NET coordinate system expects (x,y) = (0,0) to be the top left hand corner
+        /// </summary>
+        /// <param name="projMatrix"></param>
+	    public void Resize(ref Matrix4 projMatrix)
+	    {
+	        GL.UseProgram(guiShader.Program);
+            GL.UniformMatrix4(guiShader.Uniforms["uproj_matrix"], false, ref projMatrix);
+	    }
+
 	}
 }

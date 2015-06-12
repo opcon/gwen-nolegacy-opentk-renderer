@@ -29,6 +29,8 @@ namespace Gwen.Sample.OpenTK
 		private long lastTime;
 		private bool altDown = false;
 
+	    private Matrix4 _projectionMatrix;
+
 		public SimpleWindow()
 			: base (1024, 768, new GraphicsMode (), "gwen OpenTK Renderer", GameWindowFlags.Default, DisplayDevice.Default, 4, 3, GraphicsContextFlags.Default)
 		{
@@ -133,7 +135,13 @@ namespace Gwen.Sample.OpenTK
 		/// <remarks>There is no need to call the base implementation.</remarks>
 		protected override void OnResize(EventArgs e)
 		{
-			renderer.Resize (Width, Height);
+		    _projectionMatrix = Matrix4.CreateOrthographic(Width, Height, -1.0f, 1.0f);
+
+		    _projectionMatrix = Matrix4.Mult(Matrix4.CreateScale(new Vector3(1, -1, 1)), _projectionMatrix);
+		    _projectionMatrix = Matrix4.Mult(Matrix4.CreateTranslation(new Vector3(-Width / 2.0f, -Height / 2.0f, 0)), _projectionMatrix);
+
+            //renderer.Resize (Width, Height);
+            renderer.Resize(ref _projectionMatrix);
 
 			canvas.SetSize(Width, Height);
 		}
