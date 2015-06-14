@@ -959,7 +959,7 @@ namespace Gwen.Control
 
 			string sub = "";
 			for (int i = 0; i < CursorPosition.Y; i++) {
-				sub += m_TextLines[i] + "\n";
+				sub += "\n";
 			}
 
 			Point p = new Point(Skin.Renderer.MeasureText(Font, CurrLine).X, Skin.Renderer.MeasureText(Font, sub).Y);
