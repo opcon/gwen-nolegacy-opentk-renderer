@@ -823,8 +823,11 @@ namespace Gwen.Control
 
 			/* Find the appropriate Y row (always pick whichever y the mouse currently is on) */
 			for (int y = 0; y < m_TextLines.Count(); y++) {
-				sub += m_TextLines[y] + Environment.NewLine;
+				sub += m_TextLines[y];
 				Point cp = Skin.Renderer.MeasureText(Font, sub);
+			    cp.X += m_ScrollControl.HorizontalScroll;
+			    cp.Y += m_ScrollControl.VerticalScroll;
+			    sub += Environment.NewLine;
 
 				double YDist = Math.Abs(cp.Y - p.Y);
 				if (YDist < distance) {
@@ -832,6 +835,8 @@ namespace Gwen.Control
 					Best.Y = y;
 				}
 			}
+
+		    Best.Y = Best.Y;
 
 			/* Find the best X row, closest char */
 			sub = String.Empty;
@@ -958,6 +963,7 @@ namespace Gwen.Control
 			}
 
 			Point p = new Point(Skin.Renderer.MeasureText(Font, CurrLine).X, Skin.Renderer.MeasureText(Font, sub).Y);
+		    p.Y = p.Y - p.Y / (CursorPosition.Y + 1);
 
 			return new Point(p.X + m_Text.X, p.Y + m_Text.Y + TextPadding.Top);
 		}
