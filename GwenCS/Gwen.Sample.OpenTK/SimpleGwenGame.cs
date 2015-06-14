@@ -141,7 +141,7 @@ namespace Gwen.Sample.OpenTK
 		    _projectionMatrix = Matrix4.Mult(Matrix4.CreateTranslation(new Vector3(-Width / 2.0f, -Height / 2.0f, 0)), _projectionMatrix);
 
             //renderer.Resize (Width, Height);
-            renderer.Resize(ref _projectionMatrix);
+            renderer.Resize(ref _projectionMatrix, Width, Height);
 
 			canvas.SetSize(Width, Height);
 		}
