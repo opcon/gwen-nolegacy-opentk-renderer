@@ -264,8 +264,8 @@ namespace Gwen.Control
 
 			if (!HasFocus) return;
 
-			int VerticalOffset = 2 - m_ScrollControl.VerticalScroll;
-			int VerticalSize = Font.Size + 6;
+			int VerticalOffset = (int)(-Font.Size*0.20f - m_ScrollControl.VerticalScroll);
+			int VerticalSize = (int)(Font.Size*1.45f);
 
 			// Draw selection.. if selected..
 			if (m_CursorPos != m_CursorEnd) {
@@ -328,10 +328,17 @@ namespace Gwen.Control
 			// Draw caret
 			float time = Platform.Neutral.GetTimeInSeconds() - m_LastInputTime;
 
-			if ((time % 1.0f) <= 0.5f) {
-				skin.Renderer.DrawColor = Color.Black;
+		    var t = time % 2.0f;
+			if (t > 1f)
+			{
+			    skin.Renderer.DrawColor = Color.FromArgb((int)(255 / (1 + Math.Exp(-15.8135f * (t-1) / 2 + 3))), Color.Black);
 				skin.Renderer.DrawFilledRect(m_CaretBounds);
 			}
+            else if (t < 1f)
+            {
+                skin.Renderer.DrawColor = Color.FromArgb((int)(255 / (1 + Math.Exp(-(-15.8135f * (t) / 2 + 3)))), Color.Black);
+                skin.Renderer.DrawFilledRect(m_CaretBounds); 
+            }
 		}
 
 		protected void RefreshCursorBounds() {
@@ -348,12 +355,12 @@ namespace Gwen.Control
 			//m_SelectionBounds.Height = TextHeight + 2;
 
 			m_CaretBounds.X = pA.X;
-			m_CaretBounds.Y = (pA.Y + 1);
+			m_CaretBounds.Y = (pA.Y + 2);
 
-			m_CaretBounds.Y += m_ScrollControl.VerticalScroll;
+            m_CaretBounds.Y += m_ScrollControl.VerticalScroll;
 
 			m_CaretBounds.Width = 1;
-			m_CaretBounds.Height = Font.Size + 2;
+			m_CaretBounds.Height = (int)(Font.Size*1.5f);
 
 			Redraw();
 		}
