@@ -828,12 +828,15 @@ namespace Gwen.Control
 			Point Best = new Point(0, 0);
 			string sub = String.Empty;
 
+		    p.X -= m_ScrollControl.HorizontalScroll;
+		    p.Y -= m_ScrollControl.VerticalScroll;
+
 			/* Find the appropriate Y row (always pick whichever y the mouse currently is on) */
 			for (int y = 0; y < m_TextLines.Count(); y++) {
 				sub += m_TextLines[y];
 				Point cp = Skin.Renderer.MeasureText(Font, sub);
-			    cp.X += m_ScrollControl.HorizontalScroll;
-			    cp.Y += m_ScrollControl.VerticalScroll;
+                //cp.X -= m_ScrollControl.HorizontalScroll;
+                //cp.Y += m_ScrollControl.VerticalScroll;
 			    sub += Environment.NewLine;
 
 				double YDist = Math.Abs(cp.Y - p.Y);
@@ -856,6 +859,8 @@ namespace Gwen.Control
 				}
 
 				Point cp = Skin.Renderer.MeasureText(Font, sub);
+                //cp.X -= m_ScrollControl.HorizontalScroll;
+                //cp.Y += m_ScrollControl.VerticalScroll;
 
 				double XDiff = Math.Abs(cp.X - p.X); 
 
