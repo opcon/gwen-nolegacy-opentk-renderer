@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using OpenTK;
@@ -30,7 +31,7 @@ namespace Gwen.Renderer
 		private readonly int m_VertexSize;
 		private int m_TotalVertNum;
 
-		private readonly Dictionary<Tuple<String, Font>, QFontDrawingPimitive> m_StringCache;
+		private readonly Dictionary<Tuple<String, Font, Point>, QFontDrawingPimitive> m_StringCache;
 	    private QFontDrawing m_FontDrawing;
 		private readonly Graphics m_Graphics; // only used for text measurement
 		private int m_DrawCallCount;
@@ -56,7 +57,7 @@ namespace Gwen.Renderer
 		{
 			m_Vertices = new Vertex[MaxVerts];
 			m_VertexSize = Marshal.SizeOf(m_Vertices[0]);
-			m_StringCache = new Dictionary<Tuple<string, Font>, QFontDrawingPimitive>();
+			m_StringCache = new Dictionary<Tuple<string, Font, Point>, QFontDrawingPimitive>();
 			m_Graphics = Graphics.FromImage(new Bitmap(1024, 1024, PixelFormat.Format32bppArgb));
 			m_StringFormat = new StringFormat(StringFormat.GenericTypographic);
 			m_StringFormat.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
@@ -477,11 +478,12 @@ namespace Gwen.Renderer
 				sysQFont = font.RendererData as QFont;
 			}
 
-            var key = new Tuple<String, Font>(text, font);
+            //var key = new Tuple<String, Font>(text, font);
 
-            if (m_StringCache.ContainsKey(key))
+            if (m_StringCache.Any(kvp => kvp.Key.Item1 == text && kvp.Key.Item2 == font))
             {
-                var qdp = m_StringCache[key];
+                //var qdp = m_StringCache[key];
+                var qdp = m_StringCache.First(kvp => kvp.Key.Item1 == text && kvp.Key.Item2 == font).Value;
                 return new Point((int)Math.Ceiling(qdp.LastSize.Width), (int)Math.Ceiling(qdp.LastSize.Height));
             }
 
@@ -517,7 +519,7 @@ namespace Gwen.Renderer
             // flip y coordinate for QuickFont
 		    tp.Y = -tp.Y;
 
-            var key = new Tuple<String, Font>(text, font);
+            var key = new Tuple<String, Font, Point>(text, font, tp);
 
             if (!m_StringCache.ContainsKey(key))
             {
