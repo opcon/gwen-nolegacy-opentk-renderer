@@ -150,9 +150,9 @@
             Measured size.
             </returns>
         </member>
-        <member name="M:QuickFont.QFontDrawingPimitive.RenderGlyph(System.Single,System.Single,System.Char)">
+        <member name="M:QuickFont.QFontDrawingPimitive.RenderGlyph(System.Single,System.Single,System.Char,QuickFont.QFont,System.Collections.Generic.IList{QuickFont.QVertex},System.Drawing.Rectangle)">
             <summary>
-            Renders the glyph at the position given. Adds a drop shadow if configured.
+            Renders the glyph at the position given.
             </summary>
             <param name="x">The x.</param>
             <param name="y">The y.</param>
