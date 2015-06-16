@@ -295,14 +295,18 @@ namespace Gwen.Control
 					skin.Renderer.DrawColor = Color.FromArgb(200, 50, 170, 255);
 					skin.Renderer.DrawFilledRect(SelectionBounds);
 
+				    int oldY = SelectionBounds.Y;
+
 					/* Middle */
 					for (int i = 1; i < EndPoint.Y - StartPoint.Y; i++) {
 						pA = GetCharacterPosition(new Point(0, StartPoint.Y + i));
 						pB = GetCharacterPosition(new Point(m_TextLines[StartPoint.Y + i].Length, StartPoint.Y + i));
 
+					    oldY += VerticalSize;
+
 						SelectionBounds = new Rectangle();
 						SelectionBounds.X = Math.Min(pA.X, pB.X);
-						SelectionBounds.Y = pA.Y - VerticalOffset;
+					    SelectionBounds.Y = oldY;
 						SelectionBounds.Width = Math.Max(pA.X, pB.X) - SelectionBounds.X;
 						SelectionBounds.Height = VerticalSize;
 
