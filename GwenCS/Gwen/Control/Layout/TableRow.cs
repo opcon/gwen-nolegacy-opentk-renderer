@@ -206,7 +206,9 @@ namespace Gwen.Control.Layout
         /// <returns>Column cell text.</returns>
         public string GetText(int column = 0)
         {
-            return m_Columns[column].Text;
+            if (m_Columns != null && m_Columns[column] != null)
+                return m_Columns[column].Text;
+            return string.Empty;
         }
 
         /// <summary>
