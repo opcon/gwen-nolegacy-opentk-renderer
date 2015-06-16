@@ -117,7 +117,7 @@ namespace Gwen.Sample.OpenTK
 			input = new Input.OpenTK(this);
 			input.Initialize(canvas);
 
-			canvas.SetSize (1024, 768);
+			canvas.SetSize (Width, Height);
 			canvas.ShouldDrawBackground = true;
 			canvas.BackgroundColor = Color.FromArgb(255, 150, 170, 170);
 			//canvas.KeyboardInputEnabled = true;
@@ -135,15 +135,12 @@ namespace Gwen.Sample.OpenTK
 		/// <remarks>There is no need to call the base implementation.</remarks>
 		protected override void OnResize(EventArgs e)
 		{
-		    _projectionMatrix = Matrix4.CreateOrthographic(Width, Height, -1.0f, 1.0f);
+            GL.Viewport(0,0,Width, Height);
 
-		    _projectionMatrix = Matrix4.Mult(Matrix4.CreateScale(new Vector3(1, -1, 1)), _projectionMatrix);
-		    _projectionMatrix = Matrix4.Mult(Matrix4.CreateTranslation(new Vector3(-Width / 2.0f, -Height / 2.0f, 0)), _projectionMatrix);
+		    _projectionMatrix = Matrix4.CreateTranslation(new Vector3(-Width / 2.0f, -Height / 2.0f, 0)) * Matrix4.CreateScale(new Vector3(1, -1, 1)) * Matrix4.CreateOrthographic(Width, Height, -1.0f, 1.0f);
 
-            //renderer.Resize (Width, Height);
             renderer.Resize(ref _projectionMatrix, Width, Height);
-
-			canvas.SetSize(Width, Height);
+            canvas.SetSize(Width, Height);
 		}
 
 		/// <summary>
@@ -185,8 +182,8 @@ namespace Gwen.Sample.OpenTK
 		protected override void OnRenderFrame(FrameEventArgs e)
 		{
 			GL.Clear(ClearBufferMask.DepthBufferBit | ClearBufferMask.ColorBufferBit);
-			
-			canvas.RenderCanvas ();
+
+            canvas.RenderCanvas();
 
 			SwapBuffers();
 		}
