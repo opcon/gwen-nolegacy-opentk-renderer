@@ -146,7 +146,7 @@ namespace Gwen.Renderer
 		public override void End()
 		{
 			Flush();
-		    DrawText();
+            //DrawText();
 			GL.BindVertexArray (0);
 			GL.BindBuffer (BufferTarget.ArrayBuffer, 0);
 			
@@ -170,6 +170,15 @@ namespace Gwen.Renderer
 	    {
             m_FontDrawing.RefreshBuffers();
             m_FontDrawing.Draw();
+
+            GL.ActiveTexture(TextureUnit.Texture0);
+            GL.UseProgram(guiShader.Program);
+
+            GL.BindVertexArray(vao);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);
+
+	        m_LastTextureID = -1;
+
 	    }
 
 	    /// <summary>
@@ -284,7 +293,7 @@ namespace Gwen.Renderer
 			{
 				// cpu scissors test
 
-				if (ScissorsTest(rect, ref u1, ref v1, ref u2, ref v2)) return;
+				if (ScissorsTest(ref rect, ref u1, ref v1, ref u2, ref v2)) return;
 			}
 
 			float cR = m_Color.R / 255f;
@@ -355,7 +364,7 @@ namespace Gwen.Renderer
 			m_VertNum += 6;
 		}
 
-	    private bool ScissorsTest(Rectangle rect, ref float u1, ref float v1, ref float u2, ref float v2)
+	    private bool ScissorsTest(ref Rectangle rect, ref float u1, ref float v1, ref float u2, ref float v2)
 	    {
 	        if (rect.Y < ClipRegion.Y)
 	        {
@@ -442,7 +451,7 @@ namespace Gwen.Renderer
 	        var style = FontStyle.Regular;
 	        if (n.Length == 2) style = FontStyle.TryParse(n[1], true, out style) == true ? style : FontStyle.Regular;
             // now load the font - note this can fail (I think) if the font is not found
-            sysQFont = new QFont(n[0], font.Size, new QFontBuilderConfiguration(), style);
+            sysQFont = new QFont(n[0], font.Size, new QFontBuilderConfiguration(){Characters = CharacterSet.General}, style);
 		    font.RendererData = sysQFont;
 		    return true;
 
@@ -466,7 +475,27 @@ namespace Gwen.Renderer
 			font.RendererData = null;
 		}
 
-		public override Point MeasureText(Font font, string text)
+	    public override void InvalidateCachedText(Font font, Point position, string text)
+	    {
+            var tp = Translate(position);
+            // flip y coordinate for QuickFont
+            tp.Y = -tp.Y;
+
+            var key = new Tuple<String, Font, Point>(text, font, tp);
+	        m_StringCache.Remove(key);
+	    }
+
+	    public override void InvalidateCachedText(string text)
+	    {
+	        var kvp = m_StringCache.Where(kv => string.Equals(kv.Key.Item1, text));
+	        var keys = kvp.Select(k => k.Key).ToArray();
+	        foreach (var k in keys)
+	        {
+	            m_StringCache.Remove(k);
+	        }
+	    }
+
+	    public override Point MeasureText(Font font, string text)
 		{
 			//Debug.Print(String.Format("MeasureText '{0}'", text));
 			QFont sysQFont = font.RendererData as QFont;
@@ -504,7 +533,8 @@ namespace Gwen.Renderer
 			// so make sure everything is rendered!
 
             //All text currently drawn in separate call, don't need to flush atm
-            //Flush();
+            Flush();
+            m_FontDrawing.DrawingPimitiveses.Clear();
 
 		    QFont sysQFont = font.RendererData as QFont;
 
@@ -525,14 +555,21 @@ namespace Gwen.Renderer
             {
                 // not cached - create text renderer
                 Debug.Print(String.Format("RenderText: caching \"{0}\", {1}", text, font.FaceName));
+                Rectangle cRect;
+                if (m_ClipEnabled)
+                    cRect = new Rectangle(ClipRegion.X, -ClipRegion.Y, ClipRegion.Width, ClipRegion.Height);
+                else
+                    cRect = default(Rectangle);
 
                 m_StringCache[key] = new QFontDrawingPimitive(sysQFont);
-                m_StringCache[key].Print(text, new Vector3(tp.X, tp.Y, 0), QFontAlignment.Left, this.DrawColor);
+                m_StringCache[key].Print(text, new Vector3(tp.X, tp.Y, 0), QFontAlignment.Left, this.DrawColor, cRect);
             }
             else
             {
                 m_FontDrawing.DrawingPimitiveses.Add(m_StringCache[key]);
             }
+            
+            DrawText();
 		}
 
 		internal static void LoadTextureInternal(Texture t, Bitmap bmp)
@@ -728,7 +765,8 @@ namespace Gwen.Renderer
 	    public void Resize(ref Matrix4 projMatrix, int width, int height)
 	    {
 	        GL.UseProgram(guiShader.Program);
-            GL.UniformMatrix4(guiShader.Uniforms["uproj_matrix"], false, ref projMatrix);
+            var loc = guiShader.Uniforms["uproj_matrix"];
+            GL.UniformMatrix4(loc, false, ref projMatrix);
             var fMatrix = Matrix4.CreateTranslation(new Vector3(-width / 2.0f, height / 2.0f, 0)) * Matrix4.CreateScale(1, -1, 1) * Matrix4.CreateTranslation(new Vector3(width / 2.0f, height / 2.0f, 0)) * projMatrix;
             m_FontDrawing.ProjectionMatrix = fMatrix;
 	    }
