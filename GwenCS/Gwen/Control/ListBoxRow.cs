@@ -30,12 +30,12 @@ namespace Gwen.Control
             get { return m_Selected; }
             set
             {
+                Skin.Renderer.InvalidateCachedText(Text);
                 m_Selected = value;             
-                // TODO: Get these values from the skin.
                 if (value)
-                    SetTextColor(Color.White);
+                    SetTextColor(Skin.Colors.Label.Bright);
                 else
-                    SetTextColor(Color.Black);
+                    SetTextColor(Skin.Colors.Label.Default);
             }
         }
 
