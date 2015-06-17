@@ -557,7 +557,7 @@ namespace Gwen.Renderer
                 Debug.Print(String.Format("RenderText: caching \"{0}\", {1}", text, font.FaceName));
                 Rectangle cRect;
                 if (m_ClipEnabled)
-                    cRect = new Rectangle(ClipRegion.X, -ClipRegion.Y, ClipRegion.Width, ClipRegion.Height);
+                    cRect = new Rectangle(ClipRegion.X, -ClipRegion.Y - ClipRegion.Height, ClipRegion.Width, ClipRegion.Height);
                 else
                     cRect = default(Rectangle);
 
