@@ -264,8 +264,8 @@ namespace Gwen.Control
 
 			if (!HasFocus) return;
 
-			int VerticalOffset = 2 - m_ScrollControl.VerticalScroll;
-			int VerticalSize = Font.Size + 6;
+			int VerticalOffset = (int)(-Font.Size*0.20f - m_ScrollControl.VerticalScroll);
+			int VerticalSize = (int)(Font.Size*1.45f);
 
 			// Draw selection.. if selected..
 			if (m_CursorPos != m_CursorEnd) {
@@ -295,14 +295,18 @@ namespace Gwen.Control
 					skin.Renderer.DrawColor = Color.FromArgb(200, 50, 170, 255);
 					skin.Renderer.DrawFilledRect(SelectionBounds);
 
+				    int oldY = SelectionBounds.Y;
+
 					/* Middle */
 					for (int i = 1; i < EndPoint.Y - StartPoint.Y; i++) {
 						pA = GetCharacterPosition(new Point(0, StartPoint.Y + i));
 						pB = GetCharacterPosition(new Point(m_TextLines[StartPoint.Y + i].Length, StartPoint.Y + i));
 
+					    oldY += VerticalSize;
+
 						SelectionBounds = new Rectangle();
 						SelectionBounds.X = Math.Min(pA.X, pB.X);
-						SelectionBounds.Y = pA.Y - VerticalOffset;
+					    SelectionBounds.Y = oldY;
 						SelectionBounds.Width = Math.Max(pA.X, pB.X) - SelectionBounds.X;
 						SelectionBounds.Height = VerticalSize;
 
@@ -328,10 +332,17 @@ namespace Gwen.Control
 			// Draw caret
 			float time = Platform.Neutral.GetTimeInSeconds() - m_LastInputTime;
 
-			if ((time % 1.0f) <= 0.5f) {
-				skin.Renderer.DrawColor = Color.Black;
+		    var t = time % 2.0f;
+			if (t > 1f)
+			{
+			    skin.Renderer.DrawColor = Color.FromArgb((int)(255 / (1 + Math.Exp(-15.8135f * (t-1) / 2 + 3))), Color.Black);
 				skin.Renderer.DrawFilledRect(m_CaretBounds);
 			}
+            else if (t < 1f)
+            {
+                skin.Renderer.DrawColor = Color.FromArgb((int)(255 / (1 + Math.Exp(-(-15.8135f * (t) / 2 + 3)))), Color.Black);
+                skin.Renderer.DrawFilledRect(m_CaretBounds); 
+            }
 		}
 
 		protected void RefreshCursorBounds() {
@@ -348,12 +359,12 @@ namespace Gwen.Control
 			//m_SelectionBounds.Height = TextHeight + 2;
 
 			m_CaretBounds.X = pA.X;
-			m_CaretBounds.Y = (pA.Y + 1);
+			m_CaretBounds.Y = (pA.Y + 2);
 
-			m_CaretBounds.Y += m_ScrollControl.VerticalScroll;
+            m_CaretBounds.Y += m_ScrollControl.VerticalScroll;
 
 			m_CaretBounds.Width = 1;
-			m_CaretBounds.Height = Font.Size + 2;
+			m_CaretBounds.Height = (int)(Font.Size*1.5f);
 
 			Redraw();
 		}
@@ -821,10 +832,16 @@ namespace Gwen.Control
 			Point Best = new Point(0, 0);
 			string sub = String.Empty;
 
+		    p.X -= m_ScrollControl.HorizontalScroll;
+		    p.Y -= m_ScrollControl.VerticalScroll;
+
 			/* Find the appropriate Y row (always pick whichever y the mouse currently is on) */
 			for (int y = 0; y < m_TextLines.Count(); y++) {
-				sub += m_TextLines[y] + Environment.NewLine;
+				sub += m_TextLines[y];
 				Point cp = Skin.Renderer.MeasureText(Font, sub);
+                //cp.X -= m_ScrollControl.HorizontalScroll;
+                //cp.Y += m_ScrollControl.VerticalScroll;
+			    sub += Environment.NewLine;
 
 				double YDist = Math.Abs(cp.Y - p.Y);
 				if (YDist < distance) {
@@ -832,6 +849,8 @@ namespace Gwen.Control
 					Best.Y = y;
 				}
 			}
+
+		    Best.Y = Best.Y;
 
 			/* Find the best X row, closest char */
 			sub = String.Empty;
@@ -844,6 +863,8 @@ namespace Gwen.Control
 				}
 
 				Point cp = Skin.Renderer.MeasureText(Font, sub);
+                //cp.X -= m_ScrollControl.HorizontalScroll;
+                //cp.Y += m_ScrollControl.VerticalScroll;
 
 				double XDiff = Math.Abs(cp.X - p.X); 
 
@@ -954,10 +975,11 @@ namespace Gwen.Control
 
 			string sub = "";
 			for (int i = 0; i < CursorPosition.Y; i++) {
-				sub += m_TextLines[i] + "\n";
+				sub += "\n";
 			}
 
 			Point p = new Point(Skin.Renderer.MeasureText(Font, CurrLine).X, Skin.Renderer.MeasureText(Font, sub).Y);
+		    p.Y = p.Y - p.Y / (CursorPosition.Y + 1);
 
 			return new Point(p.X + m_Text.X, p.Y + m_Text.Y + TextPadding.Top);
 		}

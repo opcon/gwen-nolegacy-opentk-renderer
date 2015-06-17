@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using OpenTK;
 using OpenTK.Graphics.OpenGL4;
+using QuickFont;
 
 using PixelFormat = System.Drawing.Imaging.PixelFormat;
 
@@ -29,7 +31,8 @@ namespace Gwen.Renderer
 		private readonly int m_VertexSize;
 		private int m_TotalVertNum;
 
-		private readonly Dictionary<Tuple<String, Font>, TextRenderer> m_StringCache;
+		private readonly Dictionary<Tuple<String, Font, Point>, QFontDrawingPimitive> m_StringCache;
+	    private QFontDrawing m_FontDrawing;
 		private readonly Graphics m_Graphics; // only used for text measurement
 		private int m_DrawCallCount;
 		private bool m_ClipEnabled;
@@ -54,11 +57,12 @@ namespace Gwen.Renderer
 		{
 			m_Vertices = new Vertex[MaxVerts];
 			m_VertexSize = Marshal.SizeOf(m_Vertices[0]);
-			m_StringCache = new Dictionary<Tuple<String, Font>, TextRenderer>();
+			m_StringCache = new Dictionary<Tuple<string, Font, Point>, QFontDrawingPimitive>();
 			m_Graphics = Graphics.FromImage(new Bitmap(1024, 1024, PixelFormat.Format32bppArgb));
 			m_StringFormat = new StringFormat(StringFormat.GenericTypographic);
 			m_StringFormat.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
 			m_RestoreRenderState = restoreRenderState;
+            m_FontDrawing = new QFontDrawing();
 
             guiShader = new GLShader ();
             guiShader.Load ("gui");
@@ -100,11 +104,14 @@ namespace Gwen.Renderer
 		public override void Dispose()
 		{
 			FlushTextCache();
+            m_FontDrawing.Dispose();
 			base.Dispose();
 		}
 
 		public override void Begin()
 		{
+            m_FontDrawing.DrawingPimitiveses.Clear();
+
 			GL.ActiveTexture (TextureUnit.Texture0);
 			GL.UseProgram (guiShader.Program);
 
@@ -139,6 +146,7 @@ namespace Gwen.Renderer
 		public override void End()
 		{
 			Flush();
+            //DrawText();
 			GL.BindVertexArray (0);
 			GL.BindBuffer (BufferTarget.ArrayBuffer, 0);
 			
@@ -158,7 +166,22 @@ namespace Gwen.Renderer
 			}
 		}
 
-		/// <summary>
+	    private void DrawText()
+	    {
+            m_FontDrawing.RefreshBuffers();
+            m_FontDrawing.Draw();
+
+            GL.ActiveTexture(TextureUnit.Texture0);
+            GL.UseProgram(guiShader.Program);
+
+            GL.BindVertexArray(vao);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);
+
+	        m_LastTextureID = -1;
+
+	    }
+
+	    /// <summary>
 		/// Returns number of cached strings in the text cache.
 		/// </summary>
 		public int TextCacheSize { get { return m_StringCache.Count; } }
@@ -172,10 +195,6 @@ namespace Gwen.Renderer
 		public void FlushTextCache()
 		{
 			// todo: some auto-expiring cache? based on number of elements or age
-			foreach (var textRenderer in m_StringCache.Values)
-			{
-				textRenderer.Dispose();
-			}
 			m_StringCache.Clear();
 		}
 
@@ -274,73 +293,7 @@ namespace Gwen.Renderer
 			{
 				// cpu scissors test
 
-				if (rect.Y < ClipRegion.Y)
-				{
-					int oldHeight = rect.Height;
-					int delta = ClipRegion.Y - rect.Y;
-					rect.Y = ClipRegion.Y;
-					rect.Height -= delta;
-
-					if (rect.Height <= 0)
-					{
-						return;
-					}
-
-					float dv = (float)delta / (float)oldHeight;
-
-					v1 += dv * (v2 - v1);
-				}
-
-				if ((rect.Y + rect.Height) > (ClipRegion.Y + ClipRegion.Height))
-				{
-					int oldHeight = rect.Height;
-					int delta = (rect.Y + rect.Height) - (ClipRegion.Y + ClipRegion.Height);
-
-					rect.Height -= delta;
-
-					if (rect.Height <= 0)
-					{
-						return;
-					}
-
-					float dv = (float)delta / (float)oldHeight;
-
-					v2 -= dv * (v2 - v1);
-				}
-
-				if (rect.X < ClipRegion.X)
-				{
-					int oldWidth = rect.Width;
-					int delta = ClipRegion.X - rect.X;
-					rect.X = ClipRegion.X;
-					rect.Width -= delta;
-
-					if (rect.Width <= 0)
-					{
-						return;
-					}
-
-					float du = (float)delta / (float)oldWidth;
-
-					u1 += du * (u2 - u1);
-				}
-
-				if ((rect.X + rect.Width) > (ClipRegion.X + ClipRegion.Width))
-				{
-					int oldWidth = rect.Width;
-					int delta = (rect.X + rect.Width) - (ClipRegion.X + ClipRegion.Width);
-
-					rect.Width -= delta;
-
-					if (rect.Width <= 0)
-					{
-						return;
-					}
-
-					float du = (float)delta / (float)oldWidth;
-
-					u2 -= du * (u2 - u1);
-				}
+				if (ScissorsTest(ref rect, ref u1, ref v1, ref u2, ref v2)) return;
 			}
 
 			float cR = m_Color.R / 255f;
@@ -411,63 +364,165 @@ namespace Gwen.Renderer
 			m_VertNum += 6;
 		}
 
-		public override bool LoadFont(Font font)
+	    private bool ScissorsTest(ref Rectangle rect, ref float u1, ref float v1, ref float u2, ref float v2)
+	    {
+	        if (rect.Y < ClipRegion.Y)
+	        {
+	            int oldHeight = rect.Height;
+	            int delta = ClipRegion.Y - rect.Y;
+	            rect.Y = ClipRegion.Y;
+	            rect.Height -= delta;
+
+	            if (rect.Height <= 0)
+	            {
+	                return true;
+	            }
+
+	            float dv = (float)delta / (float)oldHeight;
+
+	            v1 += dv * (v2 - v1);
+	        }
+
+	        if ((rect.Y + rect.Height) > (ClipRegion.Y + ClipRegion.Height))
+	        {
+	            int oldHeight = rect.Height;
+	            int delta = (rect.Y + rect.Height) - (ClipRegion.Y + ClipRegion.Height);
+
+	            rect.Height -= delta;
+
+	            if (rect.Height <= 0)
+	            {
+	                return true;
+	            }
+
+	            float dv = (float)delta / (float)oldHeight;
+
+	            v2 -= dv * (v2 - v1);
+	        }
+
+	        if (rect.X < ClipRegion.X)
+	        {
+	            int oldWidth = rect.Width;
+	            int delta = ClipRegion.X - rect.X;
+	            rect.X = ClipRegion.X;
+	            rect.Width -= delta;
+
+	            if (rect.Width <= 0)
+	            {
+	                return true;
+	            }
+
+	            float du = (float)delta / (float)oldWidth;
+
+	            u1 += du * (u2 - u1);
+	        }
+
+	        if ((rect.X + rect.Width) > (ClipRegion.X + ClipRegion.Width))
+	        {
+	            int oldWidth = rect.Width;
+	            int delta = (rect.X + rect.Width) - (ClipRegion.X + ClipRegion.Width);
+
+	            rect.Width -= delta;
+
+	            if (rect.Width <= 0)
+	            {
+	                return true;
+	            }
+
+	            float du = (float)delta / (float)oldWidth;
+
+	            u2 -= du * (u2 - u1);
+	        }
+	        return false;
+	    }
+
+	    public override bool LoadFont(Font font)
 		{
 			Debug.Print(String.Format("LoadFont {0}", font.FaceName));
-			font.RealSize = font.Size * Scale;
-			System.Drawing.Font sysFont = font.RendererData as System.Drawing.Font;
+		    font.RealSize = font.Size * Scale;
 
-			if (sysFont != null)
-				sysFont.Dispose();
+            // we check if this font is already loaded, if so we dispose it first
+            QFont sysQFont = font.RendererData as QFont;
+            if (sysQFont != null)
+                sysQFont.Dispose();
 
-			// apaprently this can't fail @_@
-			// "If you attempt to use a font that is not supported, or the font is not installed on the machine that is running the application, the Microsoft Sans Serif font will be substituted."
-			sysFont = new System.Drawing.Font(font.FaceName, font.Size);
-			font.RendererData = sysFont;
-			return true;
+            // get font style from the name
+	        var n = font.FaceName.Split('|');
+	        var style = FontStyle.Regular;
+	        if (n.Length == 2) style = FontStyle.TryParse(n[1], true, out style) == true ? style : FontStyle.Regular;
+            // now load the font - note this can fail (I think) if the font is not found
+            sysQFont = new QFont(n[0], font.Size, new QFontBuilderConfiguration(){Characters = CharacterSet.General}, style);
+		    font.RendererData = sysQFont;
+		    return true;
+
+            //Debug.Print(String.Format("LoadFont {0}", font.FaceName));
+            //font.RealSize = font.Size * Scale;
+            //System.Drawing.Font sysFont = font.RendererData as System.Drawing.Font;
 		}
 
 		public override void FreeFont(Font font)
 		{
 			Debug.Print(String.Format("FreeFont {0}", font.FaceName));
-			if (font.RendererData == null)
-				return;
+		    if (font.RendererData == null)
+		        return;
 
 			Debug.Print(String.Format("FreeFont {0} - actual free", font.FaceName));
-			System.Drawing.Font sysFont = font.RendererData as System.Drawing.Font;
-			if (sysFont == null)
+		    QFont sysQFont = font.RendererData as QFont;
+			if (sysQFont == null)
 				throw new InvalidOperationException("Freeing empty font");
 
-			sysFont.Dispose();
+			sysQFont.Dispose();
 			font.RendererData = null;
 		}
 
-		public override Point MeasureText(Font font, string text)
+	    public override void InvalidateCachedText(Font font, Point position, string text)
+	    {
+            var tp = Translate(position);
+            // flip y coordinate for QuickFont
+            tp.Y = -tp.Y;
+
+            var key = new Tuple<String, Font, Point>(text, font, tp);
+	        m_StringCache.Remove(key);
+	    }
+
+	    public override void InvalidateCachedText(string text)
+	    {
+	        var kvp = m_StringCache.Where(kv => string.Equals(kv.Key.Item1, text));
+	        var keys = kvp.Select(k => k.Key).ToArray();
+	        foreach (var k in keys)
+	        {
+	            m_StringCache.Remove(k);
+	        }
+	    }
+
+	    public override Point MeasureText(Font font, string text)
 		{
 			//Debug.Print(String.Format("MeasureText '{0}'", text));
-			System.Drawing.Font sysFont = font.RendererData as System.Drawing.Font;
+			QFont sysQFont = font.RendererData as QFont;
 
-			if (sysFont == null || Math.Abs(font.RealSize - font.Size * Scale) > 2)
+			if (sysQFont == null || Math.Abs(font.RealSize - font.Size * Scale) > 2)
 			{
 				FreeFont(font);
 				LoadFont(font);
-				sysFont = font.RendererData as System.Drawing.Font;
+				sysQFont = font.RendererData as QFont;
 			}
 
-			var key = new Tuple<String, Font>(text, font);
+            //var key = new Tuple<String, Font>(text, font);
 
-			if (m_StringCache.ContainsKey(key))
-			{
-				var tex = m_StringCache[key].Texture;
-				return new Point(tex.Width, tex.Height);
-			}
+            if (m_StringCache.Any(kvp => kvp.Key.Item1 == text && kvp.Key.Item2 == font))
+            {
+                //var qdp = m_StringCache[key];
+                var qdp = m_StringCache.First(kvp => kvp.Key.Item1 == text && kvp.Key.Item2 == font).Value;
+                return new Point((int)Math.Ceiling(qdp.LastSize.Width), (int)Math.Ceiling(qdp.LastSize.Height));
+            }
 
-			SizeF TabSize = m_Graphics.MeasureString("....", sysFont); //Spaces are not being picked up, let's just use .'s.
-			m_StringFormat.SetTabStops(0f, new float[] { TabSize.Width });
+		    SizeF size = sysQFont.Measure(text);
+            //SizeF TabSize = m_Graphics.MeasureString("....", sysFont); //Spaces are not being picked up, let's just use .'s.
+            //m_StringFormat.SetTabStops(0f, new float[] { TabSize.Width });
 
-			SizeF size = m_Graphics.MeasureString(text, sysFont, Point.Empty, m_StringFormat);
+            //SizeF size = m_Graphics.MeasureString(text, sysFont, Point.Empty, m_StringFormat);
 
-			return new Point((int)Math.Round(size.Width), (int)Math.Round(size.Height));
+			return new Point((int)Math.Ceiling(size.Width), (int)Math.Ceiling(size.Height));
 		}
 
 		public override void RenderText(Font font, Point position, string text)
@@ -476,39 +531,45 @@ namespace Gwen.Renderer
 
 			// The DrawString(...) below will bind a new texture
 			// so make sure everything is rendered!
-			Flush();
 
-			System.Drawing.Font sysFont = font.RendererData as System.Drawing.Font;
+            //All text currently drawn in separate call, don't need to flush atm
+            Flush();
+            m_FontDrawing.DrawingPimitiveses.Clear();
 
-			if (sysFont == null || Math.Abs(font.RealSize - font.Size * Scale) > 2)
+		    QFont sysQFont = font.RendererData as QFont;
+
+			if (sysQFont == null || Math.Abs(font.RealSize - font.Size * Scale) > 2)
 			{
 				FreeFont(font);
 				LoadFont(font);
-				sysFont = font.RendererData as System.Drawing.Font;
+				sysQFont = font.RendererData as QFont;
 			}
 
-			var key = new Tuple<String, Font>(text, font);
+		    var tp = Translate(position);
+            // flip y coordinate for QuickFont
+		    tp.Y = -tp.Y;
 
-			if (!m_StringCache.ContainsKey(key))
-			{
-				// not cached - create text renderer
-				Debug.Print(String.Format("RenderText: caching \"{0}\", {1}", text, font.FaceName));
+            var key = new Tuple<String, Font, Point>(text, font, tp);
 
-				Point size = MeasureText(font, text);
-				TextRenderer tr = new TextRenderer(size.X, size.Y, this);
-				Brush b = new SolidBrush (this.DrawColor);
-				tr.DrawString(text, sysFont, b, Point.Empty, m_StringFormat); // renders string on the texture
-				b.Dispose ();
+            if (!m_StringCache.ContainsKey(key))
+            {
+                // not cached - create text renderer
+                Debug.Print(String.Format("RenderText: caching \"{0}\", {1}", text, font.FaceName));
+                Rectangle cRect;
+                if (m_ClipEnabled)
+                    cRect = new Rectangle(ClipRegion.X, -ClipRegion.Y - ClipRegion.Height, ClipRegion.Width, ClipRegion.Height);
+                else
+                    cRect = default(Rectangle);
 
-				DrawTexturedRect(tr.Texture, new Rectangle(position.X, position.Y, tr.Texture.Width, tr.Texture.Height));
-
-				m_StringCache[key] = tr;
-			}
-			else
-			{
-				TextRenderer tr = m_StringCache[key];
-				DrawTexturedRect(tr.Texture, new Rectangle(position.X, position.Y, tr.Texture.Width, tr.Texture.Height));
-			}
+                m_StringCache[key] = new QFontDrawingPimitive(sysQFont);
+                m_StringCache[key].Print(text, new Vector3(tp.X, tp.Y, 0), QFontAlignment.Left, this.DrawColor, cRect);
+            }
+            else
+            {
+                m_FontDrawing.DrawingPimitiveses.Add(m_StringCache[key]);
+            }
+            
+            DrawText();
 		}
 
 		internal static void LoadTextureInternal(Texture t, Bitmap bmp)
@@ -692,19 +753,22 @@ namespace Gwen.Renderer
 			GL.Uniform2 (guiShader.Uniforms["uScreenSize"], (float)width, (float)height);
 		}
 
-	    public void Resize(Matrix4 projMatrix)
+	    public void Resize(Matrix4 projMatrix, int width, int height)
 	    {
-            Resize(ref projMatrix);
+            Resize(ref projMatrix, width, height);
 	    }
 
         /// <summary>
         /// Updates the current projection matrix for the render. NOTE the Gwen.NET coordinate system expects (x,y) = (0,0) to be the top left hand corner
         /// </summary>
         /// <param name="projMatrix"></param>
-	    public void Resize(ref Matrix4 projMatrix)
+	    public void Resize(ref Matrix4 projMatrix, int width, int height)
 	    {
 	        GL.UseProgram(guiShader.Program);
-            GL.UniformMatrix4(guiShader.Uniforms["uproj_matrix"], false, ref projMatrix);
+            var loc = guiShader.Uniforms["uproj_matrix"];
+            GL.UniformMatrix4(loc, false, ref projMatrix);
+            var fMatrix = Matrix4.CreateTranslation(new Vector3(-width / 2.0f, height / 2.0f, 0)) * Matrix4.CreateScale(1, -1, 1) * Matrix4.CreateTranslation(new Vector3(width / 2.0f, height / 2.0f, 0)) * projMatrix;
+            m_FontDrawing.ProjectionMatrix = fMatrix;
 	    }
 
 	}

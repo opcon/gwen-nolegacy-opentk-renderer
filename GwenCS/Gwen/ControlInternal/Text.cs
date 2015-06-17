@@ -155,7 +155,7 @@ namespace Gwen.ControlInternal
             {
                 p = Skin.Renderer.MeasureText(Font, TextOverride ?? String);
             }
-
+            p.Y += 1;
             if (p.X == Width && p.Y == Height)
                 return;
 
@@ -210,5 +210,13 @@ namespace Gwen.ControlInternal
 
             return c;
         }
-	}
+
+        public override void Invalidate()
+        {
+            var test = default(Rectangle);
+            if (String.IsNullOrEmpty(String) || Font == null)
+                Skin.Renderer.InvalidateCachedText(Font, Point.Empty, TextOverride??String);
+            base.Invalidate();
+        }
+    }
 }

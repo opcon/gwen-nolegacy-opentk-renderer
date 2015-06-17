@@ -193,6 +193,28 @@ namespace Gwen.Renderer
         { }
 
         /// <summary>
+        /// Invalidates the cached value for the specified text.
+        /// Only used if the renderer uses a string caching mechanism
+        /// </summary>
+        /// <param name="font">Font to use.</param>
+        /// <param name="position">Top-left corner of the text.</param>
+        /// <param name="text">Text to render.</param>
+        public virtual void InvalidateCachedText(Font font, Point position, string text)
+        {
+            
+        }
+
+        /// <summary>
+        /// Invalidates the cached value for the specified text.
+        /// Only used if the renderer uses a string caching mechanism
+        /// </summary>
+        /// <param name="text">Text to render.</param>
+        public virtual void InvalidateCachedText(string text)
+        {
+
+        }
+
+        /// <summary>
         /// Returns dimensions of the text using specified font.
         /// </summary>
         /// <param name="font">Font to use.</param>
@@ -435,5 +457,6 @@ namespace Gwen.Renderer
 
             m_ClipRegion = r;
         }
+
     }
 }

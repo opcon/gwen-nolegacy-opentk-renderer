@@ -16,15 +16,15 @@ namespace Gwen.UnitTest
             f1 = new Font(Skin.Renderer, "Arial", 15);
             label.AddText("This test uses Arial 15, Red. Padding. ", Color.Red, f1);
             
-            f2 = new Font(Skin.Renderer, "Times New Roman Bold", 20);
+            f2 = new Font(Skin.Renderer, "Times New Roman|Bold", 20);
             label.AddText("This text uses Times New Roman Bold 20, Green. Padding. ", Color.Green, f2);
 
-            f3 = new Font(Skin.Renderer, "Courier New Italic", 15);
+            f3 = new Font(Skin.Renderer, "Courier New|Italic", 15);
             label.AddText("This text uses Courier New Italic 15, Blue. Padding. ", Color.Blue, f3);
 
             label.AddLineBreak();
 
-            label.AddText("This test uses Arial 15, Magenta. Padding. ", Color.Magenta, f1);
+            label.AddText("This test uses|Arial 15, Magenta. Padding. ", Color.Magenta, f1);
         }
 
         public override void Dispose()

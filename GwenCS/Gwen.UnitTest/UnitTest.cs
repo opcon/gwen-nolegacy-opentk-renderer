@@ -20,7 +20,6 @@ namespace Gwen.UnitTest
         public UnitTest(Base parent) : base(parent)
         {
             Dock = Pos.Fill;
-            SetSize(1024, 768);
             m_List = new Control.CollapsibleList(this);
 
             LeftDock.TabControl.AddPage("Unit tests", m_List);
