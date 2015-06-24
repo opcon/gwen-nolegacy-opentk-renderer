@@ -155,7 +155,7 @@ namespace Gwen.ControlInternal
             {
                 p = Skin.Renderer.MeasureText(Font, TextOverride ?? String);
             }
-            p.Y += 1;
+            p.Y += 2;
             if (p.X == Width && p.Y == Height)
                 return;
 
