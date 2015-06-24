@@ -112,6 +112,7 @@ namespace Gwen.Control
         /// <returns>True if the text is allowed.</returns>
         protected override bool IsTextAllowed(string str)
         {
+            if (string.IsNullOrEmpty(str) || str == "-") return true;
             float d;
             if (!float.TryParse(str, out d))
                 return false;
