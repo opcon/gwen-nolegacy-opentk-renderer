@@ -127,6 +127,7 @@ namespace Gwen.Control
             m_Title = new TreeNodeLabel(this);
             m_Title.Dock = Pos.Top;
             m_Title.Margin = new Margin(16, 0, 0, 0);
+            m_Title.AutoSizeToContents = true;
             m_Title.DoubleClicked += OnDoubleClickName;
             m_Title.Clicked += OnClickName;
 
