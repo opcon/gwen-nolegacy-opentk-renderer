@@ -11,6 +11,7 @@ namespace Gwen.Control
     public class Slider : Base
     {
         protected readonly SliderBar m_SliderBar;
+        protected bool m_DrawNotches;
         protected bool m_SnapToNotches;
         protected int m_NotchCount;
         protected float m_Value;
@@ -23,9 +24,22 @@ namespace Gwen.Control
         public int NotchCount { get { return m_NotchCount; } set { m_NotchCount = value; } }
 
         /// <summary>
-        /// Determines whether the slider should snap to notches.
+        /// Determines whether the slider should snap to notches. Sets DrawNotches to true if this is set to true
         /// </summary>
-        public bool SnapToNotches { get { return m_SnapToNotches; } set { m_SnapToNotches = value; } }
+        public bool SnapToNotches
+        {
+            get { return m_SnapToNotches; }
+            set
+            {
+                m_SnapToNotches = value;
+                DrawNotches = value || DrawNotches;
+            }
+        }
+
+        /// <summary>
+        /// Determines whether the slider notches should be drawn. Automatically set to true when SnapToNotches is true
+        /// </summary>
+        public bool DrawNotches {get { return m_DrawNotches; } set { m_DrawNotches = value; }}
 
         /// <summary>
         /// Minimum value.
@@ -219,6 +233,19 @@ namespace Gwen.Control
         {
             m_Min = min;
             m_Max = max;
+        }
+
+        /// <summary>
+        /// Helper method to set the notch spacing. Enables drawing and snapping of notches
+        /// The total range must be an integer multiple of notch spacing
+        /// </summary>
+        /// <param name="spacing">Notch spacing</param>
+        public void SetNotchSpacing(int spacing)
+        {
+            var range = m_Max - m_Min;
+            if (Math.Abs(range % spacing) > float.Epsilon) throw new Exception("Total range must be an integer multiple of notch spacing");
+            NotchCount = (int)Math.Round(range / spacing);
+            SnapToNotches = true;
         }
 
         /// <summary>
