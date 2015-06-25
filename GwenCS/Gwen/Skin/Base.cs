@@ -183,7 +183,7 @@ namespace Gwen.Skin
         public virtual void DrawModalControl(Control.Base control) { }
         public virtual void DrawMenuDivider(Control.Base control) { }
         public virtual void DrawCategoryHolder(Control.Base control) { }
-        public virtual void DrawCategoryInner(Control.Base control, bool collapsed) { }
+        public virtual void DrawCategoryInner(Control.Base control, bool collapsed, int headerHeight) { }
 
         public virtual void DrawPropertyTreeNode(Control.Base control, int BorderLeft, int BorderTop)
         {

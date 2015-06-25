@@ -125,7 +125,7 @@ namespace Gwen.Control
         /// <param name="skin">Skin to use.</param>
         protected override void Render(Skin.Base skin)
         {
-            skin.DrawCategoryInner(this, m_HeaderButton.ToggleState);
+            skin.DrawCategoryInner(this, m_HeaderButton.ToggleState, m_HeaderButton.Height);
             base.Render(skin);
         }
 

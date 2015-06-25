@@ -1171,12 +1171,21 @@ namespace Gwen.Skin
             Textures.CategoryList.Outer.Draw(Renderer, control.RenderBounds);
         }
 
-        public override void DrawCategoryInner(Control.Base control, bool collapsed)
+        public override void DrawCategoryInner(Control.Base control, bool collapsed, int headerHeight)
         {
             if (collapsed)
                 Textures.CategoryList.Header.Draw(Renderer, control.RenderBounds);
             else
-                Textures.CategoryList.Inner.Draw(Renderer, control.RenderBounds);
+            {
+                var b = control.RenderBounds;
+                b.Height = headerHeight;
+                Textures.CategoryList.Header.Draw(Renderer, b);
+                if (control.RenderBounds.Height - headerHeight < 5) return;
+                b = control.RenderBounds;
+                b.Height -= headerHeight;
+                b.Y += headerHeight;
+                Textures.CategoryList.Inner.Draw(Renderer, b);
+            }
         }
         #endregion
     }
