@@ -16,6 +16,7 @@ namespace Gwen.ControlInternal
         private TextContainer? m_TextOverrideContainer;
         private Color _textColor;
         private Color _textColorOverride;
+        private Color _oldColor;
 
         /// <summary>
         /// Font used to display the text.
@@ -52,7 +53,11 @@ namespace Gwen.ControlInternal
         public Color TextColor
         {
             get { return _textColor; }
-            set { _textColor = value; Invalidate();}
+            set
+            {
+                _oldColor = _textColor;
+                _textColor = value; 
+            }
         }
 
         /// <summary>
@@ -223,8 +228,11 @@ namespace Gwen.ControlInternal
 
         public override void Invalidate()
         {
-            if (String.IsNullOrEmpty(String) || Font == null)
-                Skin.Renderer.InvalidateCachedText(Font, Point.Empty, TextOverride??String);
+            if (_oldColor != _textColor && !String.IsNullOrEmpty(String) && Font != null)
+            {
+                Skin.Renderer.InvalidateCachedText(TextOverride??String);
+                _oldColor = _textColor;
+            }
             base.Invalidate();
         }
     }
