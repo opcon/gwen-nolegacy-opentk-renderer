@@ -40,12 +40,12 @@ namespace Gwen.Control
             m_HeaderButton = new CategoryHeaderButton(this);
             m_HeaderButton.Text = "Category Title"; // [omeg] todo: i18n
             m_HeaderButton.Dock = Pos.Top;
-            m_HeaderButton.Height = 20;
+            m_HeaderButton.AutoSizeToContents = true;
             m_HeaderButton.Toggled += OnHeaderToggle;
 
             m_List = parent;
 
-            Padding = new Padding(1, 0, 1, 5);
+            Padding = new Padding(1, 0, 1, 1);
             SetSize(512, 512);
         }
 
@@ -150,7 +150,7 @@ namespace Gwen.Control
         /// <param name="skin">Skin to use.</param>
         protected override void PostLayout(Skin.Base skin)
         {
-            if (IsCollapsed)
+            if (IsCollapsed || Children.Count == 0)
             {
                 Height = m_HeaderButton.Height;
             }
