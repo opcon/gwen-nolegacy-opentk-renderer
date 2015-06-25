@@ -45,6 +45,8 @@ namespace Gwen.ControlInternal
             }
 
             TextColor = Skin.Colors.Tree.Normal;
+
+            base.Invalidate();
         }
     }
 }

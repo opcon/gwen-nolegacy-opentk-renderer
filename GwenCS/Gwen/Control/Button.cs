@@ -292,6 +292,7 @@ namespace Gwen.Control
             }
 
             TextColor = Skin.Colors.Button.Normal;
+            Invalidate();
         }
 
         /// <summary>
