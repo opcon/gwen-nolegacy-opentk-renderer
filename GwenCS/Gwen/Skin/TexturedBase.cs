@@ -497,7 +497,7 @@ namespace Gwen.Skin
             Textures.Input.Slider.V.Disabled = new Single(m_Texture, 416 + 16, 32 + 48, 15, 15);
 
             Textures.CategoryList.Outer  = new Bordered(m_Texture, 256, 384, 63, 63, Margin.Eight);
-            Textures.CategoryList.Inner  = new Bordered(m_Texture, 256 + 64, 384, 63, 63, new Margin(8, 21, 8, 8));
+            Textures.CategoryList.Inner  = new Bordered(m_Texture, 256 + 64, 405, 63, 42, new Margin(8, 8, 8, 8));
             Textures.CategoryList.Header = new Bordered(m_Texture, 320, 352, 63, 31, Margin.Eight);
         }
         #endregion
