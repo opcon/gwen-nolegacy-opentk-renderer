@@ -249,6 +249,7 @@ namespace Gwen.Skin
         {
             public Bordered Outer;
             public Bordered Inner;
+            public Bordered CollapsedHeader;
             public Bordered Header;
         }
 
@@ -496,9 +497,10 @@ namespace Gwen.Skin
             Textures.Input.Slider.V.Down     = new Single(m_Texture, 416 + 16, 32 + 32, 15, 15);
             Textures.Input.Slider.V.Disabled = new Single(m_Texture, 416 + 16, 32 + 48, 15, 15);
 
-            Textures.CategoryList.Outer  = new Bordered(m_Texture, 256, 384, 63, 63, Margin.Eight);
-            Textures.CategoryList.Inner  = new Bordered(m_Texture, 256 + 64, 405, 63, 42, new Margin(8, 8, 8, 8));
-            Textures.CategoryList.Header = new Bordered(m_Texture, 320, 352, 63, 31, Margin.Eight);
+            Textures.CategoryList.Outer           = new Bordered(m_Texture, 256, 384, 63, 63, Margin.Eight);
+            Textures.CategoryList.Inner           = new Bordered(m_Texture, 256 + 64, 405, 63, 42, Margin.Eight);
+            Textures.CategoryList.Header          = new Bordered(m_Texture, 256+64, 384, 63, 21, Margin.Eight);
+            Textures.CategoryList.CollapsedHeader = new Bordered(m_Texture, 320, 352, 63, 31, Margin.Eight);
         }
         #endregion
 
@@ -1174,7 +1176,7 @@ namespace Gwen.Skin
         public override void DrawCategoryInner(Control.Base control, bool collapsed, int headerHeight)
         {
             if (collapsed)
-                Textures.CategoryList.Header.Draw(Renderer, control.RenderBounds);
+                Textures.CategoryList.CollapsedHeader.Draw(Renderer, control.RenderBounds);
             else
             {
                 var b = control.RenderBounds;
