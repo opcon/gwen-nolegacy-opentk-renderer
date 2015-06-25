@@ -157,7 +157,6 @@
     <Compile Include="Platform\Windows.cs" />
     <Compile Include="Pos.cs" />
     <Compile Include="Platform\Neutral.cs" />
-    <Compile Include="Skin\Simple.cs" />
     <Compile Include="Skin\SkinColors.cs" />
     <Compile Include="Skin\TexturedBase.cs" />
     <Compile Include="Skin\Texturing\Bordered.cs" />
