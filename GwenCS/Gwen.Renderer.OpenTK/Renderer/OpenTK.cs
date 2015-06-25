@@ -527,12 +527,17 @@ namespace Gwen.Renderer
 			return new Point((int)Math.Ceiling(size.Width), (int)Math.Ceiling(size.Height + extra));
 		}
 
-		public override void RenderText(Font font, Point position, string text)
+		public override void RenderText(Font font, Point position, TextContainer textContainer)
 		{
 			//Debug.Print(String.Format("RenderText {0}", font.FaceName));
 
 			// The DrawString(...) below will bind a new texture
 			// so make sure everything is rendered!
+
+		    var tp = Translate(position);
+            //perform broad phase clipping
+		    if (tp.Y > ClipRegion.Y + ClipRegion.Height || (tp.Y + font.RealSize*(textContainer.LineCount + 1) < ClipRegion.Y )) return;
+
 
             //All text currently drawn in separate call, don't need to flush atm
             Flush();
@@ -547,29 +552,23 @@ namespace Gwen.Renderer
 				sysQFont = font.RendererData as QFont;
 			}
 
-		    var tp = Translate(position);
             // flip y coordinate for QuickFont
 		    tp.Y = -tp.Y;
 
-            var key = new Tuple<String, Font, Point>(text, font, tp);
+            var key = new Tuple<String, Font, Point>(textContainer.Text, font, tp);
 
             if (!m_StringCache.ContainsKey(key))
             {
                 // not cached - create text renderer
-                Debug.Print(String.Format("RenderText: caching \"{0}\", {1}", text, font.FaceName));
+                Debug.Print(String.Format("RenderText: caching \"{0}\", {1}", textContainer.Text, font.FaceName));
                 Rectangle cRect;
-                if (m_ClipEnabled)
-                    cRect = new Rectangle(ClipRegion.X, -ClipRegion.Y - ClipRegion.Height, ClipRegion.Width, ClipRegion.Height);
-                else
-                    cRect = default(Rectangle);
+                cRect = m_ClipEnabled ? new Rectangle(ClipRegion.X, -ClipRegion.Y - ClipRegion.Height, ClipRegion.Width, ClipRegion.Height) : default(Rectangle);
 
                 m_StringCache[key] = new QFontDrawingPimitive(sysQFont);
-                m_StringCache[key].Print(text, new Vector3(tp.X, tp.Y, 0), QFontAlignment.Left, this.DrawColor, cRect);
+                m_StringCache[key].Print(textContainer.Text, new Vector3(tp.X, tp.Y, 0), QFontAlignment.Left, this.DrawColor, cRect);
             }
-            else
-            {
-                m_FontDrawing.DrawingPimitiveses.Add(m_StringCache[key]);
-            }
+
+            m_FontDrawing.DrawingPimitiveses.Add(m_StringCache[key]);
             
             DrawText();
 		}
