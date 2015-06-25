@@ -110,7 +110,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="DefaultSkin.png" />
+    <Content Include="DefaultSkin.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="gwen.png" />
     <Content Include="test16.png" />
   </ItemGroup>
