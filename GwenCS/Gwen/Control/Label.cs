@@ -251,11 +251,5 @@ namespace Gwen.Control
         protected override void Render(Skin.Base skin)
         {
         }
-
-        public override void Invalidate()
-        {
-            if (m_Text != null) m_Text.Invalidate();
-            base.Invalidate();
-        }
     }
 }
