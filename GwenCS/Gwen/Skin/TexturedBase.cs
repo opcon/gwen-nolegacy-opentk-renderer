@@ -461,7 +461,7 @@ namespace Gwen.Skin
             Textures.Input.ListBox.Hovered          = new Bordered(m_Texture, 320, 320, 31, 31, Margin.Eight);
             Textures.Input.ListBox.EvenLine         = new Bordered(m_Texture, 352, 256, 31, 31, Margin.Eight);
             Textures.Input.ListBox.OddLine          = new Bordered(m_Texture, 352, 288, 31, 31, Margin.Eight);
-            Textures.Input.ListBox.EvenLineSelected = new Bordered(m_Texture, 320, 270, 31, 31, Margin.Eight);
+            Textures.Input.ListBox.EvenLineSelected = new Bordered(m_Texture, 320, 256, 31, 31, Margin.Eight);
             Textures.Input.ListBox.OddLineSelected  = new Bordered(m_Texture, 320, 288, 31, 31, Margin.Eight);
 
             Textures.Input.ComboBox.Normal   = new Bordered(m_Texture, 384, 336, 127, 31, new Margin(8, 8, 32, 8));
