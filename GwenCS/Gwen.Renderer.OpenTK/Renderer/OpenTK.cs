@@ -31,7 +31,8 @@ namespace Gwen.Renderer
 		private readonly int m_VertexSize;
 		private int m_TotalVertNum;
 
-		private readonly Dictionary<Tuple<String, Font, Point>, QFontDrawingPimitive> m_StringCache;
+        //private readonly Dictionary<PrintedTextKey, QFontDrawingPrimitive> m_StringCache;
+	    private StringCache m_StringCache;
 	    private QFontDrawing m_FontDrawing;
 		private readonly Graphics m_Graphics; // only used for text measurement
 		private int m_DrawCallCount;
@@ -57,7 +58,8 @@ namespace Gwen.Renderer
 		{
 			m_Vertices = new Vertex[MaxVerts];
 			m_VertexSize = Marshal.SizeOf(m_Vertices[0]);
-			m_StringCache = new Dictionary<Tuple<string, Font, Point>, QFontDrawingPimitive>();
+            //m_StringCache = new Dictionary<PrintedTextKey, QFontDrawingPrimitive>();
+            m_StringCache = new StringCache();
 			m_Graphics = Graphics.FromImage(new Bitmap(1024, 1024, PixelFormat.Format32bppArgb));
 			m_StringFormat = new StringFormat(StringFormat.GenericTypographic);
 			m_StringFormat.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
@@ -110,7 +112,7 @@ namespace Gwen.Renderer
 
 		public override void Begin()
 		{
-            m_FontDrawing.DrawingPimitiveses.Clear();
+            m_FontDrawing.DrawingPrimitives.Clear();
 
 			GL.ActiveTexture (TextureUnit.Texture0);
 			GL.UseProgram (guiShader.Program);
@@ -166,6 +168,11 @@ namespace Gwen.Renderer
 			}
 		}
 
+	    public override void Update(double time)
+	    {
+            m_StringCache.Update(time);
+	    }
+
 	    private void DrawText()
 	    {
             m_FontDrawing.RefreshBuffers();
@@ -184,7 +191,10 @@ namespace Gwen.Renderer
 	    /// <summary>
 		/// Returns number of cached strings in the text cache.
 		/// </summary>
-		public int TextCacheSize { get { return m_StringCache.Count; } }
+		public int TextCacheSize { get { return m_StringCache.TotalCount; } }
+
+        public int LevelOneCacheSize {get { return m_StringCache.LevelOneCount; }}
+        public int LevelTwoCacheSize {get { return m_StringCache.LevelTwoCount; }}
 
 		public int DrawCallCount { get { return m_DrawCallCount; } }
 
@@ -475,24 +485,36 @@ namespace Gwen.Renderer
 			font.RendererData = null;
 		}
 
-	    public override void InvalidateCachedText(Font font, Point position, string text)
+	    public override void InvalidateCachedText(PrintedTextKey key)
 	    {
-            var tp = Translate(position);
+            var tp = Translate(key.Position);
             // flip y coordinate for QuickFont
             tp.Y = -tp.Y;
+	        key.Position = tp;
 
-            var key = new Tuple<String, Font, Point>(text, font, tp);
 	        m_StringCache.Remove(key);
 	    }
 
 	    public override void InvalidateCachedText(string text)
 	    {
-	        var kvp = m_StringCache.Where(kv => string.Equals(kv.Key.Item1, text));
-	        var keys = kvp.Select(k => k.Key).ToArray();
-	        foreach (var k in keys)
-	        {
-	            m_StringCache.Remove(k);
-	        }
+            m_StringCache.Remove(text);
+            //var kvp = m_StringCache.Where(kv => string.Equals(kv.Key.Text, text));
+            //var keys = kvp.Select(k => k.Key).ToArray();
+            //foreach (var k in keys)
+            //{
+            //    m_StringCache.Remove(k);
+            //}
+	    }
+
+	    public override void InvalidateCachedText(string text, Color color)
+	    {
+            m_StringCache.Remove(text, color);
+            //var kvp = m_StringCache.Where(kv => string.Equals(kv.Key.Text, text) && kv.Key.Color == color);
+            //var keys = kvp.Select(k => k.Key).ToArray();
+            //foreach (var k in keys)
+            //{
+            //    m_StringCache.Remove(k);
+            //}
 	    }
 
 	    public override Point MeasureText(Font font, string text)
@@ -511,10 +533,12 @@ namespace Gwen.Renderer
 	        var extra = sysQFont.MaxLineHeight - sysQFont.MaxGlyphHeight;
 	        if (extra < 0) extra = 0;
 
-            if (m_StringCache.Any(kvp => kvp.Key.Item1 == text && kvp.Key.Item2 == font))
+            //if (m_StringCache.Any(kvp => kvp.Key.Text == text && kvp.Key.Font == font))
+            if (m_StringCache.Contains(text, font))
             {
                 //var qdp = m_StringCache[key];
-                var qdp = m_StringCache.First(kvp => kvp.Key.Item1 == text && kvp.Key.Item2 == font).Value;
+                //var qdp = m_StringCache.First(kvp => kvp.Key.Text == text && kvp.Key.Font == font).Value;
+                var qdp = m_StringCache.First(text, font);
                 return new Point((int)Math.Ceiling(qdp.LastSize.Width), (int)Math.Ceiling(qdp.LastSize.Height + extra));
             }
 
@@ -541,7 +565,7 @@ namespace Gwen.Renderer
 
             //All text currently drawn in separate call, don't need to flush atm
             Flush();
-            m_FontDrawing.DrawingPimitiveses.Clear();
+            m_FontDrawing.DrawingPrimitives.Clear();
 
 		    QFont sysQFont = font.RendererData as QFont;
 
@@ -555,20 +579,20 @@ namespace Gwen.Renderer
             // flip y coordinate for QuickFont
 		    tp.Y = -tp.Y;
 
-            var key = new Tuple<String, Font, Point>(textContainer.Text, font, tp);
+            var key = new PrintedTextKey { Color = this.DrawColor, Text = textContainer.Text, Font = font, Position = tp };
 
-            if (!m_StringCache.ContainsKey(key))
+            if (!m_StringCache.Contains(key))
             {
                 // not cached - create text renderer
                 Debug.Print(String.Format("RenderText: caching \"{0}\", {1}", textContainer.Text, font.FaceName));
                 Rectangle cRect;
                 cRect = m_ClipEnabled ? new Rectangle(ClipRegion.X, -ClipRegion.Y - ClipRegion.Height, ClipRegion.Width, ClipRegion.Height) : default(Rectangle);
 
-                m_StringCache[key] = new QFontDrawingPimitive(sysQFont);
+                m_StringCache[key] = new QFontDrawingPrimitive(sysQFont);
                 m_StringCache[key].Print(textContainer.Text, new Vector3(tp.X, tp.Y, 0), QFontAlignment.Left, this.DrawColor, cRect);
             }
 
-            m_FontDrawing.DrawingPimitiveses.Add(m_StringCache[key]);
+            m_FontDrawing.DrawingPrimitives.Add(m_StringCache[key]);
             
             DrawText();
 		}
@@ -773,4 +797,6 @@ namespace Gwen.Renderer
 	    }
 
 	}
+
+
 }

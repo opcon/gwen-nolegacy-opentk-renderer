@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 
 namespace Gwen
 {
@@ -125,5 +126,13 @@ namespace Gwen
 
             return count + 1;
         }
+    }
+
+    public struct PrintedTextKey
+    {
+        public string Text;
+        public Font Font;
+        public Point Position;
+        public Color Color;
     }
 }

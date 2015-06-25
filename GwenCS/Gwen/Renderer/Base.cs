@@ -59,6 +59,11 @@ namespace Gwen.Renderer
         public virtual void End()
         { }
 
+        public virtual void Update(double time)
+        {
+            
+        }
+
         /// <summary>
         /// Gets or sets the current drawing color.
         /// </summary>
@@ -196,10 +201,8 @@ namespace Gwen.Renderer
         /// Invalidates the cached value for the specified text.
         /// Only used if the renderer uses a string caching mechanism
         /// </summary>
-        /// <param name="font">Font to use.</param>
-        /// <param name="position">Top-left corner of the text.</param>
-        /// <param name="text">Text to render.</param>
-        public virtual void InvalidateCachedText(Font font, Point position, string text)
+        /// <param name="key">The key to use for the cache dictionary</param>
+        public virtual void InvalidateCachedText(PrintedTextKey key)
         {
             
         }
@@ -212,6 +215,17 @@ namespace Gwen.Renderer
         public virtual void InvalidateCachedText(string text)
         {
 
+        }
+
+        /// <summary>
+        /// Invalidates the cached value for the specified text.
+        /// Only used if the renderer uses a string caching mechanism 
+        /// </summary>
+        /// <param name="text">Text</param>
+        /// <param name="color">Color of text</param>
+        public virtual void InvalidateCachedText(string text, Color color)
+        {
+            
         }
 
         /// <summary>
