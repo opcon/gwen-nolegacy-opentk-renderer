@@ -508,12 +508,14 @@ namespace Gwen.Renderer
 			}
 
             //var key = new Tuple<String, Font>(text, font);
+	        var extra = sysQFont.MaxLineHeight - sysQFont.MaxGlyphHeight;
+	        if (extra < 0) extra = 0;
 
             if (m_StringCache.Any(kvp => kvp.Key.Item1 == text && kvp.Key.Item2 == font))
             {
                 //var qdp = m_StringCache[key];
                 var qdp = m_StringCache.First(kvp => kvp.Key.Item1 == text && kvp.Key.Item2 == font).Value;
-                return new Point((int)Math.Ceiling(qdp.LastSize.Width), (int)Math.Ceiling(qdp.LastSize.Height));
+                return new Point((int)Math.Ceiling(qdp.LastSize.Width), (int)Math.Ceiling(qdp.LastSize.Height + extra));
             }
 
 		    SizeF size = sysQFont.Measure(text);
@@ -522,7 +524,7 @@ namespace Gwen.Renderer
 
             //SizeF size = m_Graphics.MeasureString(text, sysFont, Point.Empty, m_StringFormat);
 
-			return new Point((int)Math.Ceiling(size.Width), (int)Math.Ceiling(size.Height));
+			return new Point((int)Math.Ceiling(size.Width), (int)Math.Ceiling(size.Height + extra));
 		}
 
 		public override void RenderText(Font font, Point position, string text)
