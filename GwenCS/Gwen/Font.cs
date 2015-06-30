@@ -134,5 +134,10 @@ namespace Gwen
         public Font Font;
         public Point Position;
         public Color Color;
+
+        public override string ToString()
+        {
+            return Text;
+        }
     }
 }
