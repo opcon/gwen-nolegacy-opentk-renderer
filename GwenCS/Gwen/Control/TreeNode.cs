@@ -190,7 +190,7 @@ namespace Gwen.Control
                 else
                 {
                     m_ToggleButton.Show();
-                    m_InnerPanel.SizeToChildren(false, true);
+                   if (m_InnerPanel.IsVisible) m_InnerPanel.SizeToChildren(false, true);
                 }
             }
 
