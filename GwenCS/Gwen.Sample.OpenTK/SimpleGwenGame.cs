@@ -150,6 +150,8 @@ namespace Gwen.Sample.OpenTK
 		/// <remarks>There is no need to call the base implementation.</remarks>
 		protected override void OnUpdateFrame(FrameEventArgs e)
 		{
+            renderer.Update(e.Time);
+
 			totalTime += (float)e.Time;
 			if (ftime.Count == fps_frames)
 				ftime.RemoveAt(0);
@@ -161,7 +163,8 @@ namespace Gwen.Sample.OpenTK
 			if (stopwatch.ElapsedMilliseconds > 1000)
 			{
                 Debug.WriteLine(String.Format("String Cache size: {0} Draw Calls: {1} Vertex Count: {2}", renderer.TextCacheSize, renderer.DrawCallCount, renderer.VertexCount));
-                test.Note = String.Format("String Cache size: {0} Draw Calls: {1} Vertex Count: {2}", renderer.TextCacheSize, renderer.DrawCallCount, renderer.VertexCount);
+                test.Note = String.Format("L1: {0} L2: {3} Invalidates: {4} Duplicate Invalidates: {5} Draw Calls: {1} Vertex Count: {2}", renderer.LevelOneCacheSize, renderer.DrawCallCount,
+                    renderer.VertexCount, renderer.LevelTwoCacheSize, canvas.InvalidatesThisFrame, canvas.DuplicateInvalidates);
                 test.Fps = 1000f * ftime.Count / ftime.Sum();
 
 				float ft = 1000 * (float)e.Time;

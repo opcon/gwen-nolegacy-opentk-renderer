@@ -11,6 +11,7 @@ namespace Gwen.Renderer
     {
         private Dictionary<PrintedTextKey, CacheValueContainer> _levelOneCache;
         private Dictionary<PrintedTextKey, CacheValueContainer> _levelTwoCache;
+        private Dictionary<Tuple<string, Font>, Point> _measurementCache; 
 
         public int LevelOneStartHealth = 10;
         public int LevelOneHealthIncrease = 2;
@@ -24,6 +25,7 @@ namespace Gwen.Renderer
         {
             _levelOneCache = new Dictionary<PrintedTextKey, CacheValueContainer>();
             _levelTwoCache = new Dictionary<PrintedTextKey, CacheValueContainer>();
+            _measurementCache = new Dictionary<Tuple<string, Font>, Point>();
         }
 
         public void Update(double time)
@@ -147,6 +149,16 @@ namespace Gwen.Renderer
                 else
                     _levelOneCache.Add(key, new CacheValueContainer {DrawingPrimitive = value, Health = LevelOneStartHealth});
             }
+        }
+
+        public void AddMeasurement(string text, Font font, Point point)
+        {
+            _measurementCache.Add(new Tuple<string, Font>(text, font), point);
+        }
+
+        public bool GetMeasurement(string text, Font font, out Point size)
+        {
+            return _measurementCache.TryGetValue(new Tuple<string, Font>(text, font), out size);
         }
 
         private class CacheValueContainer

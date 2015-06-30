@@ -519,36 +519,44 @@ namespace Gwen.Renderer
 
 	    public override Point MeasureText(Font font, string text)
 		{
-			//Debug.Print(String.Format("MeasureText '{0}'", text));
 			QFont sysQFont = font.RendererData as QFont;
 
 			if (sysQFont == null || Math.Abs(font.RealSize - font.Size * Scale) > 2)
 			{
+                Debug.WriteLine("Refreshing font object");
 				FreeFont(font);
 				LoadFont(font);
 				sysQFont = font.RendererData as QFont;
 			}
 
-            //var key = new Tuple<String, Font>(text, font);
 	        var extra = sysQFont.MaxLineHeight - sysQFont.MaxGlyphHeight;
 	        if (extra < 0) extra = 0;
 
-            //if (m_StringCache.Any(kvp => kvp.Key.Text == text && kvp.Key.Font == font))
+	        bool found = false;
+	        QFontDrawingPrimitive qdp = null;
+	        Point s = Point.Empty;
             if (m_StringCache.Contains(text, font))
             {
-                //var qdp = m_StringCache[key];
-                //var qdp = m_StringCache.First(kvp => kvp.Key.Text == text && kvp.Key.Font == font).Value;
-                var qdp = m_StringCache.First(text, font);
-                return new Point((int)Math.Ceiling(qdp.LastSize.Width), (int)Math.Ceiling(qdp.LastSize.Height + extra));
+                found = true;
+                //Debug.WriteLine("Measure Text Cache Hit");
+                qdp = m_StringCache.First(text, font);
+                s = new Point((int)Math.Ceiling(qdp.LastSize.Width), (int)Math.Ceiling(qdp.LastSize.Height + extra));
             }
+	        else
+            {
+                found = m_StringCache.GetMeasurement(text, font, out s);
+            }
+            if (found)
+                return s;
 
-		    SizeF size = sysQFont.Measure(text);
-            //SizeF TabSize = m_Graphics.MeasureString("....", sysFont); //Spaces are not being picked up, let's just use .'s.
-            //m_StringFormat.SetTabStops(0f, new float[] { TabSize.Width });
+            SizeF size = sysQFont.Measure(text);
+            Debug.WriteLine("Measure Text Cache Miss");
+            ////SizeF TabSize = m_Graphics.MeasureString("....", sysFont); //Spaces are not being picked up, let's just use .'s.
+            ////m_StringFormat.SetTabStops(0f, new float[] { TabSize.Width });
 
-            //SizeF size = m_Graphics.MeasureString(text, sysFont, Point.Empty, m_StringFormat);
-
-			return new Point((int)Math.Ceiling(size.Width), (int)Math.Ceiling(size.Height + extra));
+            s = new Point((int)Math.Ceiling(size.Width), (int)Math.Ceiling(size.Height + extra));
+	        m_StringCache.AddMeasurement(text, font, s);
+            return Point.Empty;
 		}
 
 		public override void RenderText(Font font, Point position, TextContainer textContainer)
