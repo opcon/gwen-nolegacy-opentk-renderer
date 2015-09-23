@@ -9,7 +9,7 @@ namespace Gwen.UnitTest
             : base(parent)
         {
             Control.CollapsibleList control = new Control.CollapsibleList(this);
-            control.SetSize(100, 200);
+            control.SetSize(300, 200);
             control.SetPosition(10, 10);
             control.ItemSelected += OnSelection;
             control.CategoryCollapsed += OnCollapsed;

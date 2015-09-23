@@ -164,6 +164,7 @@ namespace Gwen.ControlInternal
                 throw new InvalidOperationException("Text.SizeToContents() - No Font!!\n");
             }
 
+
             Point p = new Point(1, Font.Size);
 
             if (Length > 0)

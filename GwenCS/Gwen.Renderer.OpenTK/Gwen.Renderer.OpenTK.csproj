@@ -54,8 +54,9 @@
       <HintPath>..\packages\OpenTK.1.1.1589.5942\lib\NET40\OpenTK.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="QuickFont">
-      <HintPath>Dependencies\QuickFont\QuickFont.dll</HintPath>
+    <Reference Include="QuickFont, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\QuickFont\QuickFont\bin\Release\QuickFont.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

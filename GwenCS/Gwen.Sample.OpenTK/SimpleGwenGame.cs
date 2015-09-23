@@ -21,7 +21,7 @@ namespace Gwen.Sample.OpenTK
 		private Gwen.Renderer.OpenTK renderer;
 		private Gwen.Skin.Base skin;
 		private Gwen.Control.Canvas canvas;
-		private UnitTest.UnitTest test;
+        private UnitTest.UnitTest test;
 
 		const int fps_frames = 50;
 		private readonly List<long> ftime;
@@ -120,9 +120,22 @@ namespace Gwen.Sample.OpenTK
 			canvas.SetSize (Width, Height);
 			canvas.ShouldDrawBackground = true;
 			canvas.BackgroundColor = Color.FromArgb(255, 150, 170, 170);
-			//canvas.KeyboardInputEnabled = true;
+            ////canvas.KeyboardInputEnabled = true;
 
-			test = new UnitTest.UnitTest(canvas);
+            //Control.TreeControl ctrl = new Control.TreeControl(canvas);
+
+            //ctrl.AddNode("Node One");
+            //ctrl.AddNode("Node Two").AddNode("Node Two Inside");
+            //ctrl.SetBounds(20, 20, 400, 400);
+
+            test = new UnitTest.UnitTest(canvas);
+
+            //var button = new Button(canvas);
+            //button.Font = new Font(renderer, "Times New Roman", 30);
+            //button.AutoSizeToContents = false;
+            //button.Text = "Hello I am a\n test button!";
+            //button.SetPosition(500, 500);
+            //button.SetSize(200, 30);
 
 			stopwatch.Restart();
 			lastTime = 0;
