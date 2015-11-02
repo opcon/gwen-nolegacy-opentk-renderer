@@ -22,6 +22,8 @@ namespace Gwen.Control
         /// <param name="args" >Additional arguments. May be empty (EventArgs.Empty).</param>
 		public delegate void GwenEventHandler<in T>(Base sender, T arguments) where T : System.EventArgs;
 
+        private int LastInvalidatedFrame;
+
         private bool m_Disposed;
 
         private Base m_Parent;
@@ -641,8 +643,23 @@ namespace Gwen.Control
         /// </remarks>
         public virtual void Invalidate()
         {
+            //if (LastInvalidatedFrame == GetCanvas().CurrentFrame)
+            //{
+            //    LastInvalidatedFrame = GetCanvas().CurrentFrame;
+            //    GetCanvas().DuplicateInvalidates++;
+            //    return;
+            //}
+            LastInvalidatedFrame = GetCanvas().CurrentFrame;
+            GetCanvas().InvalidatesThisFrame++;
             m_NeedsLayout = true;
             m_CacheTextureDirty = true;
+
+//#if DEBUG
+//            StackFrame frame = new StackFrame(2);
+//            var method = frame.GetMethod();
+//            var type = method.DeclaringType;
+//            Debug.WriteLine(type + "-" + method);
+//#endif
         }
 
         /// <summary>
@@ -1548,7 +1565,7 @@ namespace Gwen.Control
             {
                 Pos dock = child.Dock;
 
-                if (!(0 != (dock & Pos.Fill)))
+                if (0 == (dock & Pos.Fill))
                     continue;
 
                 Margin margin = child.Margin;

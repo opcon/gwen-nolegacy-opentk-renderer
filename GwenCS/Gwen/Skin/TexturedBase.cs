@@ -249,6 +249,7 @@ namespace Gwen.Skin
         {
             public Bordered Outer;
             public Bordered Inner;
+            public Bordered CollapsedHeader;
             public Bordered Header;
         }
 
@@ -461,7 +462,7 @@ namespace Gwen.Skin
             Textures.Input.ListBox.Hovered          = new Bordered(m_Texture, 320, 320, 31, 31, Margin.Eight);
             Textures.Input.ListBox.EvenLine         = new Bordered(m_Texture, 352, 256, 31, 31, Margin.Eight);
             Textures.Input.ListBox.OddLine          = new Bordered(m_Texture, 352, 288, 31, 31, Margin.Eight);
-            Textures.Input.ListBox.EvenLineSelected = new Bordered(m_Texture, 320, 270, 31, 31, Margin.Eight);
+            Textures.Input.ListBox.EvenLineSelected = new Bordered(m_Texture, 320, 256, 31, 31, Margin.Eight);
             Textures.Input.ListBox.OddLineSelected  = new Bordered(m_Texture, 320, 288, 31, 31, Margin.Eight);
 
             Textures.Input.ComboBox.Normal   = new Bordered(m_Texture, 384, 336, 127, 31, new Margin(8, 8, 32, 8));
@@ -496,9 +497,10 @@ namespace Gwen.Skin
             Textures.Input.Slider.V.Down     = new Single(m_Texture, 416 + 16, 32 + 32, 15, 15);
             Textures.Input.Slider.V.Disabled = new Single(m_Texture, 416 + 16, 32 + 48, 15, 15);
 
-            Textures.CategoryList.Outer  = new Bordered(m_Texture, 256, 384, 63, 63, Margin.Eight);
-            Textures.CategoryList.Inner  = new Bordered(m_Texture, 256 + 64, 384, 63, 63, new Margin(8, 21, 8, 8));
-            Textures.CategoryList.Header = new Bordered(m_Texture, 320, 352, 63, 31, Margin.Eight);
+            Textures.CategoryList.Outer           = new Bordered(m_Texture, 256, 384, 63, 63, Margin.Eight);
+            Textures.CategoryList.Inner           = new Bordered(m_Texture, 256 + 64, 405, 63, 42, Margin.Eight);
+            Textures.CategoryList.Header          = new Bordered(m_Texture, 256+64, 384, 63, 21, Margin.Eight);
+            Textures.CategoryList.CollapsedHeader = new Bordered(m_Texture, 320, 352, 63, 31, Margin.Eight);
         }
         #endregion
 
@@ -1171,12 +1173,21 @@ namespace Gwen.Skin
             Textures.CategoryList.Outer.Draw(Renderer, control.RenderBounds);
         }
 
-        public override void DrawCategoryInner(Control.Base control, bool collapsed)
+        public override void DrawCategoryInner(Control.Base control, bool collapsed, int headerHeight)
         {
             if (collapsed)
-                Textures.CategoryList.Header.Draw(Renderer, control.RenderBounds);
+                Textures.CategoryList.CollapsedHeader.Draw(Renderer, control.RenderBounds);
             else
-                Textures.CategoryList.Inner.Draw(Renderer, control.RenderBounds);
+            {
+                var b = control.RenderBounds;
+                b.Height = headerHeight;
+                Textures.CategoryList.Header.Draw(Renderer, b);
+                if (control.RenderBounds.Height - headerHeight < 5) return;
+                b = control.RenderBounds;
+                b.Height -= headerHeight;
+                b.Y += headerHeight;
+                Textures.CategoryList.Inner.Draw(Renderer, b);
+            }
         }
         #endregion
     }

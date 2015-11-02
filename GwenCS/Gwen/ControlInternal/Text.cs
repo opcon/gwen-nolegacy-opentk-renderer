@@ -11,8 +11,12 @@ namespace Gwen.ControlInternal
     /// </summary>
     public class Text : Base
     {
-        private string m_String;
         private Font m_Font;
+        private TextContainer m_TextContainer;
+        private TextContainer? m_TextOverrideContainer;
+        private Color _textColor;
+        private Color _textColorOverride;
+        private Color _oldColor;
 
         /// <summary>
         /// Font used to display the text.
@@ -35,10 +39,10 @@ namespace Gwen.ControlInternal
         /// </summary>
         public string String
         {
-            get { return m_String; }
+            get { return m_TextContainer.Text; }
             set
             {
-                m_String = value;
+                m_TextContainer.Text = value;
                 SizeToContents();
             }
         }
@@ -46,13 +50,20 @@ namespace Gwen.ControlInternal
         /// <summary>
         /// Text color.
         /// </summary>
-        public Color TextColor { get; set; }
+        public Color TextColor
+        {
+            get { return _textColor; }
+            set
+            {
+                _oldColor = _textColor;
+                _textColor = value; 
+            }
+        }
 
         /// <summary>
         /// Determines whether the control should be automatically resized to fit the text.
         /// </summary>
         //public bool AutoSizeToContents { get; set; } // [omeg] added
-
         /// <summary>
         /// Text length in characters.
         /// </summary>
@@ -61,12 +72,16 @@ namespace Gwen.ControlInternal
         /// <summary>
         /// Text color override - used by tooltips.
         /// </summary>
-        public Color TextColorOverride { get; set; }
+        public Color TextColorOverride
+        {
+            get { return _textColorOverride; }
+            set { _textColorOverride = value; Invalidate(); }
+        }
 
         /// <summary>
         /// Text override - used to display different string.
         /// </summary>
-        public string TextOverride { get; set; }
+        public string TextOverride { get { return (m_TextOverrideContainer == null) ? null : m_TextOverrideContainer.Value.Text; } set { m_TextContainer.Text = value; } }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Text"/> class.
@@ -76,7 +91,7 @@ namespace Gwen.ControlInternal
             : base(parent)
         {
             m_Font = Skin.DefaultFont;
-            m_String = String.Empty;
+            m_TextContainer = new TextContainer{Text = String.Empty};
             TextColor = Skin.Colors.Label.Default;
             MouseInputEnabled = false;
             TextColorOverride = Color.FromArgb(0, 255, 255, 255); // A==0, override disabled
@@ -95,7 +110,7 @@ namespace Gwen.ControlInternal
             else
                 skin.Renderer.DrawColor = TextColorOverride;
 
-            skin.Renderer.RenderText(Font, Point.Empty, TextOverride ?? String);
+            skin.Renderer.RenderText(Font, Point.Empty, m_TextOverrideContainer ?? m_TextContainer);
 
 #if DEBUG_TEXT_MEASURE
             {
@@ -149,13 +164,14 @@ namespace Gwen.ControlInternal
                 throw new InvalidOperationException("Text.SizeToContents() - No Font!!\n");
             }
 
+
             Point p = new Point(1, Font.Size);
 
             if (Length > 0)
             {
                 p = Skin.Renderer.MeasureText(Font, TextOverride ?? String);
             }
-            p.Y += 1;
+            //p.Y += 2;
             if (p.X == Width && p.Y == Height)
                 return;
 
@@ -213,9 +229,11 @@ namespace Gwen.ControlInternal
 
         public override void Invalidate()
         {
-            var test = default(Rectangle);
-            if (String.IsNullOrEmpty(String) || Font == null)
-                Skin.Renderer.InvalidateCachedText(Font, Point.Empty, TextOverride??String);
+            if (_oldColor != _textColor && !String.IsNullOrEmpty(String) && Font != null)
+            {
+                Skin.Renderer.InvalidateCachedText(TextOverride??String);
+                _oldColor = _textColor;
+            }
             base.Invalidate();
         }
     }

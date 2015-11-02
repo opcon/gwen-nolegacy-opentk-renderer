@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 
 namespace Gwen
 {
@@ -93,6 +94,50 @@ namespace Gwen
             //f.DropShadow = DropShadow;
 
             return f;
+        }
+    }
+
+    public struct TextContainer
+    {
+        private string _text;
+        public int LineCount {get; private set; }
+
+        public string Text
+        {
+            get { return _text; }
+            set
+            {
+                _text = value;
+                LineCount = Lines(ref _text);
+            }
+        }
+
+        private static int Lines(ref string s)
+        {
+            int count = -1;
+            int index = -1;
+
+            do
+            {
+                count++;
+                index = s.IndexOf('\n', index + 1);
+            }
+            while (index != -1);
+
+            return count + 1;
+        }
+    }
+
+    public struct PrintedTextKey
+    {
+        public string Text;
+        public Font Font;
+        public Point Position;
+        public Color Color;
+
+        public override string ToString()
+        {
+            return Text;
         }
     }
 }

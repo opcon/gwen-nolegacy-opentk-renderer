@@ -108,6 +108,7 @@ namespace Gwen.UnitTest
                 {
                     test = new CollapsibleList(m_Center);
                     RegisterUnitTest("CollapsibleList", cat, test);
+                    //test.Show();
                     test = new ColorPickers(m_Center);
                     RegisterUnitTest("Color pickers", cat, test);
                 }

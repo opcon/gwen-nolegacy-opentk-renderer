@@ -15,7 +15,7 @@ namespace Gwen.UnitTest
             {
                 Control.Label label = new Control.Label(this);
                 label.Text = "Standard label (not autosized)";
-				label.AutoSizeToContents = false;
+				label.AutoSizeToContents = true;
                 label.SetBounds(10, 10, 100, 10);
             }
             {

@@ -26,25 +26,25 @@ namespace Gwen.ControlInternal
         /// </summary>
         public override void UpdateColors()
         {
-            if (IsDisabled)
+            if (IsDisabled && TextColor != Skin.Colors.Button.Disabled)
             {
                 TextColor = Skin.Colors.Button.Disabled;
                 return;
             }
 
-            if (IsDepressed || ToggleState)
+            if ((IsDepressed || ToggleState) && TextColor != Skin.Colors.Tree.Selected)
             {
                 TextColor = Skin.Colors.Tree.Selected;
                 return;
             }
 
-            if (IsHovered)
+            if (IsHovered && TextColor != Skin.Colors.Tree.Hover)
             {
                 TextColor = Skin.Colors.Tree.Hover;
                 return;
             }
 
-            TextColor = Skin.Colors.Tree.Normal;
+            if (TextColor != Skin.Colors.Tree.Normal) TextColor = Skin.Colors.Tree.Normal;
         }
     }
 }

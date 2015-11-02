@@ -64,17 +64,30 @@ namespace Gwen.Skin.Texturing
 
             m_Margin = inMargin;
 
+            //upper left rectangle
             SetRect(0, x, y, m_Margin.Left, m_Margin.Top);
+            //upper center rectangle 
             SetRect(1, x + m_Margin.Left, y, w - m_Margin.Left - m_Margin.Right, m_Margin.Top);
+            //upper right rectangle
             SetRect(2, (x + w) - m_Margin.Right, y, m_Margin.Right, m_Margin.Top);
 
+            //center left rectangle
             SetRect(3, x, y + m_Margin.Top, m_Margin.Left, h - m_Margin.Top - m_Margin.Bottom);
+
+            //center center rectangle
             SetRect(4, x + m_Margin.Left, y + m_Margin.Top, w - m_Margin.Left - m_Margin.Right,
                     h - m_Margin.Top - m_Margin.Bottom);
+
+            //center right rectangle (why - 1?)
             SetRect(5, (x + w) - m_Margin.Right, y + m_Margin.Top, m_Margin.Right, h - m_Margin.Top - m_Margin.Bottom - 1);
 
+            //lower left rectangle
             SetRect(6, x, (y + h) - m_Margin.Bottom, m_Margin.Left, m_Margin.Bottom);
+
+            //lower center rectangle
             SetRect(7, x + m_Margin.Left, (y + h) - m_Margin.Bottom, w - m_Margin.Left - m_Margin.Right, m_Margin.Bottom);
+
+            //lower right rectangle
             SetRect(8, (x + w) - m_Margin.Right, (y + h) - m_Margin.Bottom, m_Margin.Right, m_Margin.Bottom);
 
             m_Margin.Left = (int)(m_Margin.Left * drawMarginScale);
@@ -101,23 +114,35 @@ namespace Gwen.Skin.Texturing
 
             if (r.Width < m_Width && r.Height < m_Height)
             {
+                //this control is smaller than the texture, so we don't need to do any stretching. Use the top left UV coordinates and the bottom right UV coordinates
                 render.DrawTexturedRect(m_Texture, r, m_Rects[0].uv[0], m_Rects[0].uv[1], m_Rects[8].uv[2], m_Rects[8].uv[3]);
                 return;
             }
 
+            //This control is larger than the texture, so we need to stretch the textures
+
+            //Draw the upper left rectangle
             DrawRect(render, 0, r.X, r.Y, m_Margin.Left, m_Margin.Top);
+            //Draw the upper center rectangle
             DrawRect(render, 1, r.X + m_Margin.Left, r.Y, r.Width - m_Margin.Left - m_Margin.Right, m_Margin.Top);
+            //draw the upper right rectangle
             DrawRect(render, 2, (r.X + r.Width) - m_Margin.Right, r.Y, m_Margin.Right, m_Margin.Top);
 
+            //Draw the center left rectangle
             DrawRect(render, 3, r.X, r.Y + m_Margin.Top, m_Margin.Left, r.Height - m_Margin.Top - m_Margin.Bottom);
+            //Draw the center center rectangle
             DrawRect(render, 4, r.X + m_Margin.Left, r.Y + m_Margin.Top, r.Width - m_Margin.Left - m_Margin.Right,
                      r.Height - m_Margin.Top - m_Margin.Bottom);
+            //Draw the center right rectangle
             DrawRect(render, 5, (r.X + r.Width) - m_Margin.Right, r.Y + m_Margin.Top, m_Margin.Right,
                      r.Height - m_Margin.Top - m_Margin.Bottom);
 
+            //Draw the lower left rectangle
             DrawRect(render, 6, r.X, (r.Y + r.Height) - m_Margin.Bottom, m_Margin.Left, m_Margin.Bottom);
+            //Draw the lower center rectangle
             DrawRect(render, 7, r.X + m_Margin.Left, (r.Y + r.Height) - m_Margin.Bottom,
                      r.Width - m_Margin.Left - m_Margin.Right, m_Margin.Bottom);
+            //Draw the lower right rectangle
             DrawRect(render, 8, (r.X + r.Width) - m_Margin.Right, (r.Y + r.Height) - m_Margin.Bottom, m_Margin.Right,
                      m_Margin.Bottom);
         }

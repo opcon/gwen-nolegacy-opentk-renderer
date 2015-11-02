@@ -12,6 +12,10 @@ namespace Gwen.Control
     /// </summary>
     public class Canvas : Base
     {
+        public int InvalidatesThisFrame = 0;
+        public int CurrentFrame;
+        public int DuplicateInvalidates;
+
         private bool m_NeedsRedraw;
         private float m_Scale;
 
@@ -106,6 +110,10 @@ namespace Gwen.Control
         /// </summary>
         public void RenderCanvas()
         {
+            CurrentFrame++;
+            InvalidatesThisFrame = 0;
+            DuplicateInvalidates = 0;
+
             DoThink();
 
             Renderer.Base render = Skin.Renderer;

@@ -13,6 +13,7 @@ namespace Gwen.Control
         private Pos m_Align;
         private Padding m_TextPadding;
         private bool m_AutoSizeToContents;
+        private bool m_NeedsResizing;
 
         /// <summary>
         /// Text alignment.
@@ -33,9 +34,9 @@ namespace Gwen.Control
             set
             {
                 m_Text.Font = value;
+                Invalidate();
                 if (m_AutoSizeToContents)
                     SizeToContents();
-                Invalidate();
             }
         }
         
@@ -184,20 +185,20 @@ namespace Gwen.Control
 
             Pos align = m_Align;
 
-            if (m_AutoSizeToContents)
+            if (m_AutoSizeToContents && m_NeedsResizing)
                 SizeToContents();
 
             int x = m_TextPadding.Left + Padding.Left;
             int y = m_TextPadding.Top + Padding.Top;
 
-            if (0 != (align & Pos.Right)) 
+            if (0 != (align & Pos.Right))
                 x = Width - m_Text.Width - m_TextPadding.Right - Padding.Right;
             if (0 != (align & Pos.CenterH))
                 x = (int)((m_TextPadding.Left + Padding.Left) + ((Width - m_Text.Width - m_TextPadding.Left - Padding.Left - m_TextPadding.Right - Padding.Right) * 0.5f));
 
             if (0 != (align & Pos.CenterV))
                 y = (int)((m_TextPadding.Top + Padding.Top) + ((Height - m_Text.Height) * 0.5f) - m_TextPadding.Bottom - Padding.Bottom);
-            if (0 != (align & Pos.Bottom)) 
+            if (0 != (align & Pos.Bottom))
                 y = Height - m_Text.Height - m_TextPadding.Bottom - Padding.Bottom;
 
             m_Text.SetPosition(x, y);
@@ -223,14 +224,17 @@ namespace Gwen.Control
                 OnTextChanged();
         }
 
+        //TODO this method is super slow and causing duplicate invalidations. Needs fixing! TreeControl unit test goes from 20 to 420 invalidations with this method enabled!
         public virtual void SizeToContents()
         {
+            if (!m_NeedsResizing) return;
             m_Text.SetPosition(m_TextPadding.Left + Padding.Left, m_TextPadding.Top + Padding.Top);
             m_Text.SizeToContents();
 
-            SetSize(m_Text.Width + Padding.Left + Padding.Right + m_TextPadding.Left + m_TextPadding.Right, 
+            SetSize(m_Text.Width + Padding.Left + Padding.Right + m_TextPadding.Left + m_TextPadding.Right,
                 m_Text.Height + Padding.Top + Padding.Bottom + m_TextPadding.Top + m_TextPadding.Bottom);
             InvalidateParent();
+            m_NeedsResizing = false;
         }
 
         /// <summary>
@@ -250,6 +254,12 @@ namespace Gwen.Control
         /// <param name="skin">Skin to use.</param>
         protected override void Render(Skin.Base skin)
         {
+        }
+
+        public override void Invalidate()
+        {
+            m_NeedsResizing = true;
+            base.Invalidate();
         }
     }
 }

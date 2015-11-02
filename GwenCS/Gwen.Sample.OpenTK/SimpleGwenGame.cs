@@ -21,7 +21,7 @@ namespace Gwen.Sample.OpenTK
 		private Gwen.Renderer.OpenTK renderer;
 		private Gwen.Skin.Base skin;
 		private Gwen.Control.Canvas canvas;
-		private UnitTest.UnitTest test;
+        private UnitTest.UnitTest test;
 
 		const int fps_frames = 50;
 		private readonly List<long> ftime;
@@ -120,9 +120,22 @@ namespace Gwen.Sample.OpenTK
 			canvas.SetSize (Width, Height);
 			canvas.ShouldDrawBackground = true;
 			canvas.BackgroundColor = Color.FromArgb(255, 150, 170, 170);
-			//canvas.KeyboardInputEnabled = true;
+            ////canvas.KeyboardInputEnabled = true;
 
-			test = new UnitTest.UnitTest(canvas);
+            //Control.TreeControl ctrl = new Control.TreeControl(canvas);
+
+            //ctrl.AddNode("Node One");
+            //ctrl.AddNode("Node Two").AddNode("Node Two Inside");
+            //ctrl.SetBounds(20, 20, 400, 400);
+
+            test = new UnitTest.UnitTest(canvas);
+
+            //var button = new Button(canvas);
+            //button.Font = new Font(renderer, "Times New Roman", 30);
+            //button.AutoSizeToContents = false;
+            //button.Text = "Hello I am a\n test button!";
+            //button.SetPosition(500, 500);
+            //button.SetSize(200, 30);
 
 			stopwatch.Restart();
 			lastTime = 0;
@@ -150,6 +163,8 @@ namespace Gwen.Sample.OpenTK
 		/// <remarks>There is no need to call the base implementation.</remarks>
 		protected override void OnUpdateFrame(FrameEventArgs e)
 		{
+            renderer.Update(e.Time);
+
 			totalTime += (float)e.Time;
 			if (ftime.Count == fps_frames)
 				ftime.RemoveAt(0);
@@ -160,16 +175,17 @@ namespace Gwen.Sample.OpenTK
 
 			if (stopwatch.ElapsedMilliseconds > 1000)
 			{
-				//Debug.WriteLine (String.Format ("String Cache size: {0} Draw Calls: {1} Vertex Count: {2}", renderer.TextCacheSize, renderer.DrawCallCount, renderer.VertexCount));
-				test.Note = String.Format("String Cache size: {0} Draw Calls: {1} Vertex Count: {2}", renderer.TextCacheSize, renderer.DrawCallCount, renderer.VertexCount);
-				test.Fps = 1000f * ftime.Count / ftime.Sum();
+                Debug.WriteLine(String.Format("String Cache size: {0} Draw Calls: {1} Vertex Count: {2}", renderer.TextCacheSize, renderer.DrawCallCount, renderer.VertexCount));
+                test.Note = String.Format("L1: {0} L2: {3} Invalidates: {4} Duplicate Invalidates: {5} Draw Calls: {1} Vertex Count: {2}", renderer.LevelOneCacheSize, renderer.DrawCallCount,
+                    renderer.VertexCount, renderer.LevelTwoCacheSize, canvas.InvalidatesThisFrame, canvas.DuplicateInvalidates);
+                test.Fps = 1000f * ftime.Count / ftime.Sum();
 
 				float ft = 1000 * (float)e.Time;
 
 				stopwatch.Restart();
 
-				if (renderer.TextCacheSize > 1000) // each cached string is an allocated texture, flush the cache once in a while in your real project
-					renderer.FlushTextCache();
+                if (renderer.TextCacheSize > 1000) // each cached string is an allocated texture, flush the cache once in a while in your real project
+                    renderer.FlushTextCache();
 			}
 		}
 

@@ -18,6 +18,7 @@ namespace Gwen.Control
         private bool m_Root;
         private bool m_Selected;
         private bool m_Selectable;
+        private bool _forceShowToggle;
 
         /// <summary>
         /// Indicates whether this is a root node.
@@ -33,6 +34,16 @@ namespace Gwen.Control
         /// Determines whether the node is selectable.
         /// </summary>
         public bool IsSelectable { get { return m_Selectable; } set { m_Selectable = value; } }
+
+        public bool ForceShowToggle
+        {
+            get { return _forceShowToggle; }
+            set
+            {
+                _forceShowToggle = value;
+                if (value) m_ToggleButton.IsHidden = true;
+            }
+        }
 
         /// <summary>
         /// Indicates whether the node is selected.
@@ -120,6 +131,7 @@ namespace Gwen.Control
         public TreeNode(Base parent)
             : base(parent)
         {
+            ForceShowToggle = false;
             m_ToggleButton = new TreeToggleButton(this);
             m_ToggleButton.SetBounds(0, 0, 15, 15);
             m_ToggleButton.Toggled += OnToggleButtonPress;
@@ -127,6 +139,7 @@ namespace Gwen.Control
             m_Title = new TreeNodeLabel(this);
             m_Title.Dock = Pos.Top;
             m_Title.Margin = new Margin(16, 0, 0, 0);
+            m_Title.AutoSizeToContents = true;
             m_Title.DoubleClicked += OnDoubleClickName;
             m_Title.Clicked += OnClickName;
 
@@ -180,7 +193,7 @@ namespace Gwen.Control
                     m_ToggleButton.SetPosition(0, (m_Title.Height - m_ToggleButton.Height)*0.5f);
                 }
 
-                if (m_InnerPanel.Children.Count == 0)
+                if (m_InnerPanel.Children.Count == 0 && !ForceShowToggle)
                 {
                     m_ToggleButton.Hide();
                     m_ToggleButton.ToggleState = false;
@@ -189,7 +202,7 @@ namespace Gwen.Control
                 else
                 {
                     m_ToggleButton.Show();
-                    m_InnerPanel.SizeToChildren(false, true);
+                   if (m_InnerPanel.IsVisible) m_InnerPanel.SizeToChildren(false, true);
                 }
             }
 

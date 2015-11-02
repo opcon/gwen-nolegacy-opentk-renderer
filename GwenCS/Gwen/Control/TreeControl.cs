@@ -15,6 +15,9 @@ namespace Gwen.Control
         /// </summary>
         public bool AllowMultiSelect { get { return m_MultiSelect; } set { m_MultiSelect = value; } }
 
+        public bool AutoUpdateBounds { get; set; }
+
+
         /// <summary>
         /// Initializes a new instance of the <see cref="TreeControl"/> class.
         /// </summary>
@@ -22,6 +25,7 @@ namespace Gwen.Control
         public TreeControl(Base parent)
             : base(parent)
         {
+            AutoUpdateBounds = true;
             m_TreeControl = this;
 
             RemoveChild(m_ToggleButton, true);
@@ -63,7 +67,12 @@ namespace Gwen.Control
         /// <param name="child"></param>
         protected override void OnChildBoundsChanged(System.Drawing.Rectangle oldChildBounds, Base child)
         {
-            if (m_ScrollControl != null)
+            UpdateBounds();
+        }
+
+        public void UpdateBounds()
+        {
+            if (m_ScrollControl != null && AutoUpdateBounds)
                 m_ScrollControl.UpdateScrollBars();
         }
 
