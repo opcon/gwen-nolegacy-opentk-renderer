@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Gwen.NET")]
 [assembly: AssemblyDescription("A simple GUI library for .NET, based on Gwen")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Gwen.NET")]
 [assembly: AssemblyProduct("Gwen.Net")]
 [assembly: AssemblyCopyright("Copyleft © 2011 Omega Red")]
 [assembly: AssemblyTrademark("")]
