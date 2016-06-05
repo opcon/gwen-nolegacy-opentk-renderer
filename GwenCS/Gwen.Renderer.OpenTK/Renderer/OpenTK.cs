@@ -9,6 +9,7 @@ using System.Threading;
 using OpenTK;
 using OpenTK.Graphics.OpenGL4;
 using QuickFont;
+using QuickFont.Configuration;
 
 using PixelFormat = System.Drawing.Imaging.PixelFormat;
 

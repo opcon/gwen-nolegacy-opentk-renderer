@@ -1,8 +1,10 @@
-gwen-nolegacy-opentk-renderer
-=============================
-Fork of https://code.google.com/p/gwen-dotnet/
+#Gwen.NET
 
-Adapted Gwen OpenTK Renderer to not use legacy OpenGL: Uses VBOs and shaders instead of client side vertex arrays and fixed function shading pipeline. Draws triangles instead of quads.
+##Features
+* A fully managed GUI library for .NET
+* Comes with an OpenTK renderer that uses mondern OpenGL - no legacy stuff
+* Uses the QuickFont library for text rendering
 
-Original code is C++ written by Garry Newman.
-https://github.com/garrynewman/GWEN
+Originally forked from [here](https://code.google.com/p/gwen-dotnet/)
+
+Original code is C++ written by Garry Newman, [here](https://github.com/garrynewman/GWEN)
