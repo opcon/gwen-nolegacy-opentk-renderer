@@ -6,7 +6,7 @@
     <title>$title$</title>
     <authors>$author$</authors>
     <owners>$author$</owners>
-    <licenseUrl>http://LICENSE_URL_HERE_OR_DELETE_THIS_LINE</licenseUrl>
+    <licenseUrl>https://github.com/opcon/gwen-nolegacy-opentk-renderer/blob/master/LICENSE.txt</licenseUrl>
     <projectUrl>https://github.com/opcon/gwen-nolegacy-opentk-renderer</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
