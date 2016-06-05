@@ -53,6 +53,10 @@
     <DocumentationFile>bin\Release\Gwen.Renderer.OpenTK.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Gwen, Version=3.0.6001.172, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Gwen.3.0.6001.172\lib\net40\Gwen.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <HintPath>..\packages\OpenTK.Next.1.1.1616.8959\lib\net20\OpenTK.dll</HintPath>
       <Private>True</Private>
@@ -99,12 +103,6 @@
     <None Include="_CreateNewNuGetPackage\DoNotModify\New-NuGetPackage.ps1" />
     <None Include="_CreateNewNuGetPackage\DoNotModify\UploadNuGetPackage.ps1" />
     <None Include="_CreateNewNuGetPackage\RunMeToUploadNuGetPackage.cmd" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Gwen\Gwen.csproj">
-      <Project>{ADDA2F43-96C0-497F-8216-29C67ABC9806}</Project>
-      <Name>Gwen</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="_CreateNewNuGetPackage\DoNotModify\NuGet.exe" />
