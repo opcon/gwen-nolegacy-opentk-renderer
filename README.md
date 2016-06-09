@@ -1,5 +1,7 @@
 #Gwen.NET
 
+[![Join the chat at https://gitter.im/opcon/gwen-nolegacy-opentk-renderer](https://badges.gitter.im/opcon/gwen-nolegacy-opentk-renderer.svg)](https://gitter.im/opcon/gwen-nolegacy-opentk-renderer?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 ##Features
 * A fully managed GUI library for .NET
 * Comes with an OpenTK renderer that uses mondern OpenGL - no legacy stuff
