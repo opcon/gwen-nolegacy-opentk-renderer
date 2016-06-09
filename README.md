@@ -3,7 +3,7 @@ Gwen.NET [![Join the chat at https://gitter.im/opcon/gwen-nolegacy-opentk-render
 
 ## Features
 * A fully managed GUI library for .NET
-* Comes with an OpenTK renderer that uses mondern OpenGL - no legacy stuff
+* Comes with an OpenTK renderer that uses pure modern OpenGL - no legacy stuff
 * Uses the QuickFont library for text rendering
 
 **Gwen.NET does not come with a default renderer, the OpenTK renderer can be installed from [nuget](https://www.nuget.org/packages/Gwen.Renderer.OpenTK):** [![NuGet Version and Downloads](https://buildstats.info/nuget/Gwen.Renderer.OpenTK)](https://www.nuget.org/packages/Gwen.Renderer.OpenTK/) 
