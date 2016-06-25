@@ -13,5 +13,8 @@
     <releaseNotes></releaseNotes>
     <copyright>Copyright 2016</copyright>
     <tags>Gwen OpenTK GUI</tags>
+    <dependencies>
+      <dependency id="Gwen" version="3.0" />
+    </dependencies>
   </metadata>
 </package>
