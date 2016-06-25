@@ -4,7 +4,7 @@ configuration:
 - Debug
 - Release
 before_build:
-- cmd: nuget restore
+- cmd: nuget restore GwenCS/GwenNet.sln
 build:
   project: GwenCS/GwenNet.sln
   publish_nuget: true
