@@ -6,6 +6,7 @@ configuration:
 before_build:
 - cmd: nuget restore
 build:
+  project: GwenCS/GwenNet.sln
   publish_nuget: true
   publish_nuget_symbols: true
   parallel: true
