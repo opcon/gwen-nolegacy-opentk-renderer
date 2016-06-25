@@ -1,2 +1,10 @@
+os:
+  - linux
+  - osx
 language: csharp
 solution: GwenCS/GwenNet.sln
+notifications:
+  email:
+    on_success: change
+    on_failure: always
+    on_start: never
