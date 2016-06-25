@@ -65,10 +65,6 @@
     <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Gwen, Version=3.0.6001.172, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Gwen.3.0.6001.172\lib\net40\Gwen.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <HintPath>..\packages\OpenTK.Next.1.1.1616.8959\lib\net20\OpenTK.dll</HintPath>
       <Private>True</Private>
@@ -113,6 +109,10 @@
     <ProjectReference Include="..\Gwen.UnitTest\Gwen.UnitTest.csproj">
       <Project>{1E28C643-0671-4EDF-ADEE-B75D33BAE5AF}</Project>
       <Name>Gwen.UnitTest</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Gwen\Gwen.csproj">
+      <Project>{adda2f43-96c0-497f-8216-29c67abc9806}</Project>
+      <Name>Gwen</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
