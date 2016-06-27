@@ -4,7 +4,8 @@ configuration:
 - Debug
 - Release
 before_build:
-- cmd: nuget restore GwenCS/GwenNet.sln
+  - cmd: .paket/paket-bootstrapper.exe
+  - cmd: .paket/paket.exe restore
 build:
   project: GwenCS/GwenNet.sln
   publish_nuget: true
