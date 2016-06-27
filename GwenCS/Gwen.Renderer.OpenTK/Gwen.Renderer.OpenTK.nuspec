@@ -15,6 +15,7 @@
     <tags>Gwen OpenTK GUI</tags>
     <dependencies>
       <dependency id="Gwen" version="3.0" />
+      <dependency id="OpenTK.Next" version="1.1.1616.8959" />
     </dependencies>
   </metadata>
 </package>
