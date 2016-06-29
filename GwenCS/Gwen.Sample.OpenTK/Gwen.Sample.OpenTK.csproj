@@ -85,6 +85,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Content Include="OpenTK.dll.config">
+      <Paket>True</Paket>
+    </Content>
     <Content Include="OpenSans.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -165,6 +168,4 @@
       </ItemGroup>
     </When>
   </Choose>
-  <Import Project="..\..\packages\OpenTK.Next\build\OpenTK.Next.targets" Condition="Exists('..\..\packages\OpenTK.Next\build\OpenTK.Next.targets')" Label="Paket" />
-  <Import Project="..\..\packages\OpenTK.Next\build\OpenTK.targets" Condition="Exists('..\..\packages\OpenTK.Next\build\OpenTK.targets')" Label="Paket" />
 </Project>
