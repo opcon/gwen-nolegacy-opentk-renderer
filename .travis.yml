@@ -4,7 +4,7 @@ os:
 language: csharp
 solution: GwenCS/GwenNet.sln
 before_script:
-  - mono .paket/paket-bootstrapper.exe
+  - mono .paket/paket.bootstrapper.exe
   - mono .paket/paket.exe restore
 notifications:
   email:
