@@ -53,9 +53,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Content Include="OpenTK.dll.config">
-      <Paket>True</Paket>
-    </Content>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -162,4 +159,6 @@ PowerShell -NoProfile -ExecutionPolicy Bypass -Command "&amp; '$(ProjectDir)_Cre
       </ItemGroup>
     </When>
   </Choose>
+  <Import Project="..\..\packages\OpenTK.Next\build\OpenTK.Next.targets" Condition="Exists('..\..\packages\OpenTK.Next\build\OpenTK.Next.targets')" Label="Paket" />
+  <Import Project="..\..\packages\OpenTK.Next\build\OpenTK.targets" Condition="Exists('..\..\packages\OpenTK.Next\build\OpenTK.targets')" Label="Paket" />
 </Project>

@@ -4,13 +4,13 @@ configuration:
 - Debug
 - Release
 before_build:
-  - cmd: .paket/paket-bootstrapper.exe
-  - cmd: .paket/paket.exe restore
+  - cmd: .paket\paket-bootstrapper.exe
+  - cmd: .paket\paket.exe restore
 build:
   project: GwenCS/GwenNet.sln
-  publish_nuget: true
-  publish_nuget_symbols: true
   parallel: true
   verbosity: minimal
+after_build:
+  - cmd: .paket\paket.exe pack output artifacts symbols buildconfig %CONFIGURATION% -v
 artifacts:
   - path: '**\*Gwen*.nupkg'
