@@ -1,0 +1,11 @@
+type project
+licenseUrl 
+    https://github.com/opcon/gwen-nolegacy-opentk-renderer/blob/master/LICENSE.txt
+projectUrl 
+    https://github.com/opcon/gwen-nolegacy-opentk-renderer
+tags 
+    Gwen GUI OpenTK
+copyright 
+    Copyright 2016
+dependencies
+    OpenTK.Next >= 1.1.1616.8959

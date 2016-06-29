@@ -200,3 +200,12 @@ UpgradeLog*.htm
 
 # Microsoft Fakes
 FakesAssemblies/
+
+# Swap files
+*.swp
+
+# Paket files
+paket.exe
+
+# preference files
+*.userprefs
