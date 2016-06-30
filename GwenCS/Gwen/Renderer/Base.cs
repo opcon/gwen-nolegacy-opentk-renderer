@@ -36,7 +36,9 @@ namespace Gwen.Renderer
         {
             if (CTT != null)
                 CTT.ShutDown();
+#if DEBUG
             GC.SuppressFinalize(this);
+#endif
         }
 
 #if DEBUG

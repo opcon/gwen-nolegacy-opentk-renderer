@@ -69,7 +69,9 @@ namespace Gwen
         public void Dispose()
         {
             m_Renderer.FreeFont(this);
+#if DEBUG
             GC.SuppressFinalize(this);
+#endif
         }
         
 #if DEBUG

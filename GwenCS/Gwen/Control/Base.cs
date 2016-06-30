@@ -504,7 +504,9 @@ namespace Gwen.Control
             m_Children.Clear();
 
             m_Disposed = true;
+#if DEBUG
             GC.SuppressFinalize(this);
+#endif
         }
 
 #if DEBUG
