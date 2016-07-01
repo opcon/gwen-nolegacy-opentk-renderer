@@ -5,7 +5,7 @@ NUGET
       SharpFont.Dependencies
     SharpFont.Dependencies (2.6) - framework: >= net40
   remote: https://ci.appveyor.com/nuget/quickfont-m6wdxb2yf1v5
-    QuickFont.Desktop (4.3.6024.4) - framework: >= net40
+    QuickFont.Desktop (4.3.6026.2076) - framework: >= net40
       OpenTK.Next (>= 1.1.1616.8959)
       SharpFont (>= 3.1)
       SharpFont.Dependencies (>= 2.6)
