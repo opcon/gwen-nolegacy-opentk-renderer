@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Windows.Forms;
 using Gwen.ControlInternal;
+using System.Windows.Forms;
 
 namespace Gwen.Control
 {
@@ -80,9 +80,11 @@ namespace Gwen.Control
         /// <returns>Newly created row.</returns>
         public PropertyRow Add(string label, Property.Base prop, string value="")
         {
-            PropertyRow row = new PropertyRow(this, prop);
-            row.Dock = Pos.Top;
-            row.Label = label;
+            PropertyRow row = new PropertyRow(this, prop)
+            {
+                Dock = Pos.Top,
+                Label = label
+            };
             row.ValueChanged += OnRowValueChanged;
 
             prop.SetValue(value, true);

@@ -114,17 +114,11 @@ namespace Gwen.Platform
                              };
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                if (callback != null)
-                {
-                    callback(dialog.FileName);
-                }
+                callback?.Invoke(dialog.FileName);
             }
             else
             {
-                if (callback != null)
-                {
-                    callback(String.Empty);
-                }
+                callback?.Invoke(String.Empty);
                 return false;
             }
 
@@ -152,17 +146,11 @@ namespace Gwen.Platform
             };
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                if (callback != null)
-                {
-                    callback(dialog.FileName);
-                }
+                callback?.Invoke(dialog.FileName);
             }
             else
             {
-                if (callback != null)
-                {
-                    callback(String.Empty);
-                }
+                callback?.Invoke(String.Empty);
                 return false;
             }
 

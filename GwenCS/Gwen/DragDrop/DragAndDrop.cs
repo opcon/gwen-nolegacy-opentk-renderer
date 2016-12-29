@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Drawing;
-using System.Windows.Forms;
 using Gwen.Control;
 using Gwen.Input;
+using System.Windows.Forms;
 
 namespace Gwen.DragDrop
 {
@@ -21,7 +21,7 @@ namespace Gwen.DragDrop
         private static int m_MouseX;
         private static int m_MouseY;
 
-        private static bool onDrop(int x, int y)
+        private static bool OnDrop(int x, int y)
         {
             bool success = false;
 
@@ -158,7 +158,7 @@ namespace Gwen.DragDrop
                     return false;
 
                 // We were carrying something, drop it.
-                onDrop(x, y);
+                OnDrop(x, y);
                 return true;
             }
 
