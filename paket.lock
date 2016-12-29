@@ -1,11 +1,10 @@
 NUGET
   remote: https://www.nuget.org/api/v2
-    OpenTK.Next (1.2.2336.6514-pre)
-    SharpFont (3.1) - framework: >= net40
-      SharpFont.Dependencies
-    SharpFont.Dependencies (2.6) - framework: >= net40
-  remote: https://ci.appveyor.com/nuget/quickfont-m6wdxb2yf1v5
-    QuickFont.Desktop (4.3.6026.2076) - framework: >= net40
-      OpenTK.Next (>= 1.1.1616.8959)
-      SharpFont (>= 3.1)
+    OpenTK (2.0)
+    QuickFont.Desktop (4.4.6159.26433) - framework: >= net45
+      OpenTK (>= 2.0)
+      SharpFont (>= 4.0)
       SharpFont.Dependencies (>= 2.6)
+    SharpFont (4.0.1) - framework: >= net45
+      SharpFont.Dependencies
+    SharpFont.Dependencies (2.6) - framework: >= net45
