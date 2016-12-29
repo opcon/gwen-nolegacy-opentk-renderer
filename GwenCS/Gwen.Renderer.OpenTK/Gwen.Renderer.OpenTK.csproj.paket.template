@@ -8,5 +8,5 @@ tags
 copyright 
     Copyright 2016
 dependencies
-    OpenTK.Next >= 1.1.1616.8959
+    OpenTK >= 2.0
     Gwen >= 4.0
